@@ -1,14 +1,15 @@
+import { Route, Routes } from 'react-router-dom';
 import './App.css';
-import { Button } from './components/ui/button';
+import Home from './pages/Home';
+import About from './pages/About';
 
 function App() {
   return (
-    <>
-      <h1>Vite + React</h1>
-      <div className="flex flex-col items-center justify-center min-h-svh">
-        <Button>Click me</Button>
-      </div>
-    </>
+    <Routes>
+      {/* this is test for testing the routing */}
+      <Route path="/" element={<Home />} />
+      <Route path="/about" element={<About />} />
+    </Routes>
   );
 }
 
