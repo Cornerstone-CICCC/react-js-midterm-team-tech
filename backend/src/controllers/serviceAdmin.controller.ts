@@ -12,7 +12,8 @@ const createService = async (req: Request, res: Response) => {
          nationality,
          self_introduction,
          price,
-         available_time
+         available_time,
+         price_id
       } = req.body
 
       const service = await Service.create({
@@ -23,7 +24,8 @@ const createService = async (req: Request, res: Response) => {
          nationality,
          self_introduction,
          price,
-         available_time
+         available_time,
+         price_id
       })
 
       res.status(201).send(service)
