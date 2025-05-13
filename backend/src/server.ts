@@ -7,6 +7,7 @@ import orderRouter from './routes/orderClient.route';
 import clientRouter from './routes/serviceClient.route';
 import cookieParser from 'cookie-parser';
 import { publicRouter, protectedRouter } from './routes/user.routes';
+import { purchaseRouter } from './routes/purchase.routes';
 import { authenticateToken } from './middlewares/authMiddleware';
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use(cookieParser());
 
 app.use('/user', publicRouter)
 app.use('/user', authenticateToken, protectedRouter)
+app.use('/purchase', purchaseRouter)
 
 //Routes
 app.use('/admin/service', serviceRouter)
