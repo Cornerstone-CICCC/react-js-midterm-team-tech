@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import serviceRouter from './routes/service.route';
 dotenv.config();
 
 
@@ -17,6 +18,9 @@ app.use(
 );
 app.use(express.json());
 
+
+//Routes
+app.use('/admin/service', serviceRouter)
 
 //Fallback
 app.use((req: Request, res: Response) => {
