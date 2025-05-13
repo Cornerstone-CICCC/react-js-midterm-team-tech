@@ -5,6 +5,10 @@ import mongoose from 'mongoose';
 import serviceRouter from './routes/serviceAdmin.route';
 import orderRouter from './routes/orderClient.route';
 import clientRouter from './routes/serviceClient.route';
+import cookieParser from 'cookie-parser';
+import { publicRouter, protectedRouter } from './routes/user.routes';
+import { authenticateToken } from './middlewares/authMiddleware';
+
 dotenv.config();
 
 
@@ -19,7 +23,10 @@ app.use(
   })
 );
 app.use(express.json());
+app.use(cookieParser());
 
+app.use('/user', publicRouter)
+app.use('/user', authenticateToken, protectedRouter)
 
 //Routes
 app.use('/admin/service', serviceRouter)
