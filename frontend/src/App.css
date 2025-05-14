@@ -1,0 +1,31 @@
+@keyframes typing {
+  0% {
+    width: 0;
+  }
+  40% {
+    width: 6ch;
+  }
+  60% {
+    width: 6ch;
+  }
+  100% {
+    width: 0;
+  }
+}
+
+@keyframes blink {
+  0%, 100% {
+    border-color: transparent;
+  }
+  50% {
+    border-color: black;
+  }
+}
+
+.typing-text {
+  font-family: monospace;
+  overflow: hidden;
+  white-space: nowrap;
+  display: inline-block;
+  animation: typing 6s steps(6) infinite;
+}
