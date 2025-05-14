@@ -29,72 +29,26 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-
-// Types
-interface GirlfriendData {
-  id: string;
-  name: string;
-  age: number;
-  location: string;
-  availability: string;
-  price: number;
-  introduction: string;
-  imageUrl: string;
-}
+import type { Girl } from '@/type';
+import { initialGirls } from '@/constant/sample';
 
 const RentalGirlfriendAdmin = () => {
-  // Sample initial data
-  const initialData: GirlfriendData[] = [
-    {
-      id: '1',
-      name: 'Yuki Tanaka',
-      age: 22,
-      location: 'Shibuya, Tokyo',
-      availability: 'Weekends',
-      price: 5000,
-      introduction:
-        'Hello! I love shopping and watching movies. I can be your perfect date for any occasion!',
-      imageUrl: '',
-    },
-    {
-      id: '2',
-      name: 'Mika Suzuki',
-      age: 24,
-      location: 'Shinjuku, Tokyo',
-      availability: 'Weekdays Evening',
-      price: 6000,
-      introduction:
-        "I enjoy meaningful conversations and can help you practice your Japanese. Let's have a great time together!",
-      imageUrl: '',
-    },
-    {
-      id: '3',
-      name: 'Airi Nakamura',
-      age: 23,
-      location: 'Ikebukuro, Tokyo',
-      availability: 'Anytime',
-      price: 7000,
-      introduction:
-        "I'm a university student who loves anime and gaming. I can join you for exhibitions or gaming sessions!",
-      imageUrl: '',
-    },
-  ];
-
-  const [girlfriends, setGirlfriends] = useState<GirlfriendData[]>(initialData);
+  const [girlfriends, setGirlfriends] = useState<Girl[]>(initialGirls);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [currentGirlfriend, setCurrentGirlfriend] =
-    useState<GirlfriendData | null>(null);
-  const [formData, setFormData] = useState<GirlfriendData>({
+  const [currentGirlfriend, setCurrentGirlfriend] = useState<Girl | null>(null);
+  const [formData, setFormData] = useState<Girl>({
     id: '',
     name: '',
     age: 20,
-    location: '',
-    availability: '',
-    price: 0,
-    introduction: '',
-    imageUrl: '',
+    height: 160,
+    nationality: '',
+    price: 5000,
+    avatar: '',
+    self_introduction: '',
+    available_time: '', // weekend , both
+    price_id: '',
   });
 
   // Handle input changes
@@ -113,27 +67,29 @@ const RentalGirlfriendAdmin = () => {
   // Open Add Dialog
   const openAddDialog = () => {
     setFormData({
-      id: Math.random().toString(36).substring(2, 9),
+      id: '',
       name: '',
       age: 20,
-      location: '',
-      availability: 'Weekends',
+      height: 160,
+      nationality: '',
+      available_time: 'Weekends',
       price: 5000,
-      introduction: '',
-      imageUrl: '',
+      self_introduction: '',
+      avatar: '',
+      price_id: '',
     });
     setIsAddDialogOpen(true);
   };
 
   // Open Edit Dialog
-  const openEditDialog = (girlfriend: GirlfriendData) => {
+  const openEditDialog = (girlfriend: Girl) => {
     setCurrentGirlfriend(girlfriend);
     setFormData({ ...girlfriend });
     setIsEditDialogOpen(true);
   };
 
   // Open Delete Dialog
-  const openDeleteDialog = (girlfriend: GirlfriendData) => {
+  const openDeleteDialog = (girlfriend: Girl) => {
     setCurrentGirlfriend(girlfriend);
     setIsDeleteDialogOpen(true);
   };
@@ -180,7 +136,7 @@ const RentalGirlfriendAdmin = () => {
                   <div className="flex items-center gap-4">
                     <Avatar className="h-12 w-12">
                       <AvatarImage
-                        src={girlfriend.imageUrl}
+                        src={girlfriend.avatar}
                         alt={girlfriend.name}
                       />
                       <AvatarFallback className="bg-gray-200">
@@ -190,7 +146,7 @@ const RentalGirlfriendAdmin = () => {
                     <div>
                       <h3 className="font-medium">{girlfriend.name}</h3>
                       <p className="text-sm text-gray-500">
-                        {girlfriend.age} yrs • {girlfriend.location} • ¥
+                        {girlfriend.age} yrs • {girlfriend.nationality} • ¥
                         {girlfriend.price.toLocaleString()}/hour
                       </p>
                     </div>
@@ -245,11 +201,11 @@ const RentalGirlfriendAdmin = () => {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="location">Location</Label>
+              <Label htmlFor="nationality">Nationality</Label>
               <Input
-                id="location"
-                name="location"
-                value={formData.location}
+                id="nationality"
+                name="nationality"
+                value={formData.nationality}
                 onChange={handleInputChange}
               />
             </div>
@@ -257,7 +213,7 @@ const RentalGirlfriendAdmin = () => {
               <Label htmlFor="availability">Availability</Label>
               <Select
                 name="availability"
-                value={formData.availability}
+                value={formData.available_time}
                 onValueChange={value =>
                   handleSelectChange(value, 'availability')
                 }
@@ -290,7 +246,7 @@ const RentalGirlfriendAdmin = () => {
               <Textarea
                 id="introduction"
                 name="introduction"
-                value={formData.introduction}
+                value={formData.self_introduction}
                 onChange={handleInputChange}
                 rows={3}
               />
@@ -337,11 +293,11 @@ const RentalGirlfriendAdmin = () => {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-location">Location</Label>
+              <Label htmlFor="edit-nationality">Nationality</Label>
               <Input
-                id="edit-location"
-                name="location"
-                value={formData.location}
+                id="edit-nationality"
+                name="nationality"
+                value={formData.nationality}
                 onChange={handleInputChange}
               />
             </div>
@@ -349,7 +305,7 @@ const RentalGirlfriendAdmin = () => {
               <Label htmlFor="edit-availability">Availability</Label>
               <Select
                 name="availability"
-                value={formData.availability}
+                value={formData.available_time}
                 onValueChange={value =>
                   handleSelectChange(value, 'availability')
                 }
@@ -382,7 +338,7 @@ const RentalGirlfriendAdmin = () => {
               <Textarea
                 id="edit-introduction"
                 name="introduction"
-                value={formData.introduction}
+                value={formData.self_introduction}
                 onChange={handleInputChange}
                 rows={3}
               />

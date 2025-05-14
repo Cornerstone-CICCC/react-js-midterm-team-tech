@@ -10,134 +10,13 @@ import {
 } from '@/components/ui/dialog';
 import { X } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
+import { initialGirls } from '@/constant/sample';
+import type { Girl } from '@/type';
 
-// Girl data type
-type Girl = {
-  id: number;
-  name: string;
-  age: number;
-  height: number;
-  location: string;
-  price: number;
-  imageUrl: string;
-  introduction: string;
-  availability: string;
-};
-
-// Sample data
-const initialGirls: Girl[] = [
-  {
-    id: 1,
-    name: 'Sakura',
-    age: 22,
-    height: 162,
-    location: 'Tokyo',
-    price: 8000,
-    imageUrl: '/api/placeholder/300/300',
-    introduction:
-      "Hi, I'm Sakura! I love shopping and watching movies. Let's have a great time together!",
-    availability: 'Mon-Fri, 12:00-20:00',
-  },
-  {
-    id: 2,
-    name: 'Mio',
-    age: 24,
-    height: 158,
-    location: 'Yokohama',
-    price: 7500,
-    imageUrl: '/api/placeholder/300/300',
-    introduction:
-      "Hello! I'm Mio. I enjoy art galleries and quiet cafes. I'd love to share these experiences with you.",
-    availability: 'Weekends, 10:00-18:00',
-  },
-  {
-    id: 3,
-    name: 'Ayaka',
-    age: 21,
-    height: 165,
-    location: 'Tokyo',
-    price: 9000,
-    imageUrl: '/api/placeholder/300/300',
-    introduction:
-      "I'm Ayaka! I'm a university student who loves outdoor activities. Let's create wonderful memories together!",
-    availability: 'Tue-Sun, 14:00-22:00',
-  },
-  {
-    id: 4,
-    name: 'Reina',
-    age: 23,
-    height: 155,
-    location: 'Osaka',
-    price: 8500,
-    imageUrl: '/api/placeholder/300/300',
-    introduction:
-      "Reina here! I'm passionate about music and food. I can show you the best spots in Osaka!",
-    availability: 'Mon-Sat, 13:00-21:00',
-  },
-  {
-    id: 5,
-    name: 'Yuka',
-    age: 25,
-    height: 160,
-    location: 'Nagoya',
-    price: 7800,
-    imageUrl: '/api/placeholder/300/300',
-    introduction:
-      "Hey there! I'm Yuka. I love karaoke and theme parks. Let's have some fun together!",
-    availability: 'Wed-Sun, 11:00-19:00',
-  },
-  {
-    id: 6,
-    name: 'Mai',
-    age: 20,
-    height: 168,
-    location: 'Tokyo',
-    price: 9500,
-    imageUrl: '/api/placeholder/300/300',
-    introduction:
-      "Hi, I'm Mai! I'm a fashion enthusiast and love trying new restaurants. Looking forward to meeting you!",
-    availability: 'Mon-Fri, 15:00-23:00',
-  },
-  {
-    id: 7,
-    name: 'Haruka',
-    age: 26,
-    height: 163,
-    location: 'Fukuoka',
-    price: 8000,
-    imageUrl: '/api/placeholder/300/300',
-    introduction:
-      "Hello, I'm Haruka! I enjoy beaches and hot springs. Let me show you around Fukuoka!",
-    availability: 'Tue-Sun, 12:00-20:00',
-  },
-  {
-    id: 8,
-    name: 'Nana',
-    age: 23,
-    height: 159,
-    location: 'Osaka',
-    price: 8200,
-    imageUrl: '/api/placeholder/300/300',
-    introduction:
-      "I'm Nana! I love comedy shows and street food. Looking forward to laughing together!",
-    availability: 'Wed-Mon, 14:00-22:00',
-  },
-  {
-    id: 9,
-    name: 'Aoi',
-    age: 24,
-    height: 166,
-    location: 'Tokyo',
-    price: 9200,
-    imageUrl: '/api/placeholder/300/300',
-    introduction:
-      "Aoi here! I'm into photography and hiking. Let's explore the city together!",
-    availability: 'Thu-Tue, 11:00-19:00',
-  },
-];
-
-// Available locations list
-const locations = Array.from(new Set(initialGirls.map(girl => girl.location)));
+// Available nationalities list
+const nationalities = Array.from(
+  new Set(initialGirls.map(girl => girl.nationality))
+);
 
 export default function RentalGirlfriendList() {
   // State management
@@ -145,7 +24,7 @@ export default function RentalGirlfriendList() {
   const [nameFilter, setNameFilter] = useState('');
   const [ageRange, setAgeRange] = useState([18, 30]);
   const [heightRange, setHeightRange] = useState([150, 175]);
-  const [locationFilter, setLocationFilter] = useState<string[]>([]);
+  const [nationalityFilter, setNationalityFilter] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState([5000, 12000]);
 
   // Profile view state
@@ -177,10 +56,10 @@ export default function RentalGirlfriendList() {
       girl => girl.height >= heightRange[0] && girl.height <= heightRange[1]
     );
 
-    // Filter by location
-    if (locationFilter.length > 0) {
+    // Filter by nationality
+    if (nationalityFilter.length > 0) {
       filteredGirls = filteredGirls.filter(girl =>
-        locationFilter.includes(girl.location)
+        nationalityFilter.includes(girl.nationality)
       );
     }
 
@@ -190,14 +69,16 @@ export default function RentalGirlfriendList() {
     );
 
     setGirls(filteredGirls);
-  }, [nameFilter, ageRange, heightRange, locationFilter, priceRange]);
+  }, [nameFilter, ageRange, heightRange, nationalityFilter, priceRange]);
 
-  // Toggle location filter
-  const toggleLocation = (location: string) => {
-    if (locationFilter.includes(location)) {
-      setLocationFilter(locationFilter.filter(loc => loc !== location));
+  // Toggle nationality filter
+  const toggleNationality = (nationality: string) => {
+    if (nationalityFilter.includes(nationality)) {
+      setNationalityFilter(
+        nationalityFilter.filter(loc => loc !== nationality)
+      );
     } else {
-      setLocationFilter([...locationFilter, location]);
+      setNationalityFilter([...nationalityFilter, nationality]);
     }
   };
 
@@ -263,20 +144,22 @@ export default function RentalGirlfriendList() {
           />
         </div>
 
-        {/* Location filter */}
+        {/* nationality filter */}
         <div className="mb-6">
-          <Label className="block mb-2 font-medium">Location</Label>
+          <Label className="block mb-2 font-medium">Nationality</Label>
           <div className="space-y-2">
-            {locations.map(location => (
-              <div key={location} className="flex items-center">
+            {nationalities.map(nationality => (
+              <div key={nationality} className="flex items-center">
                 <input
                   type="checkbox"
-                  id={`location-${location}`}
-                  checked={locationFilter.includes(location)}
-                  onChange={() => toggleLocation(location)}
+                  id={`nationality-${nationality}`}
+                  checked={nationalityFilter.includes(nationality)}
+                  onChange={() => toggleNationality(nationality)}
                   className="mr-2"
                 />
-                <label htmlFor={`location-${location}`}>{location}</label>
+                <label htmlFor={`nationality-${nationality}`}>
+                  {nationality}
+                </label>
               </div>
             ))}
           </div>
@@ -313,7 +196,7 @@ export default function RentalGirlfriendList() {
               >
                 <div className="relative pb-full">
                   <img
-                    src={girl.imageUrl}
+                    src={girl.avatar}
                     alt={girl.name}
                     className="absolute w-full h-full object-cover"
                   />
@@ -323,7 +206,7 @@ export default function RentalGirlfriendList() {
                   <div className="mt-2 space-y-1 text-gray-600">
                     <p>Age: {girl.age}</p>
                     <p>Height: {girl.height} cm</p>
-                    <p>Location: {girl.location}</p>
+                    <p>Nationality: {girl.nationality}</p>
                     <p className="text-lg font-medium text-rose-500">
                       ¥{girl.price.toLocaleString()} / hour
                     </p>
@@ -354,7 +237,7 @@ export default function RentalGirlfriendList() {
               <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col items-center">
                 <div className="rounded-full overflow-hidden w-40 h-40 md:w-64 md:h-64 border-2 border-black mx-auto">
                   <img
-                    src={selectedGirl.imageUrl}
+                    src={selectedGirl.avatar}
                     alt={selectedGirl.name}
                     className="w-full h-full object-cover"
                   />
@@ -371,9 +254,9 @@ export default function RentalGirlfriendList() {
                   </div>
                   <div className="flex">
                     <span className="font-semibold w-24 md:w-32">
-                      LOCATION:
+                      NATIONALITY:
                     </span>
-                    <span>{selectedGirl.location}</span>
+                    <span>{selectedGirl.nationality}</span>
                   </div>
                   <div className="flex">
                     <span className="font-semibold w-24 md:w-32">PRICE:</span>
@@ -383,7 +266,7 @@ export default function RentalGirlfriendList() {
                     <span className="font-semibold w-24 md:w-32">
                       AVAILABILITY:
                     </span>
-                    <span>{selectedGirl.availability}</span>
+                    <span>{selectedGirl.available_time}</span>
                   </div>
                 </div>
 
@@ -400,7 +283,7 @@ export default function RentalGirlfriendList() {
                   SELF INTRODUCTION
                 </h3>
                 <div className="bg-gray-200 p-3 md:p-4 rounded min-h-32 md:min-h-40 border border-gray-400 text-sm md:text-base">
-                  <p>{selectedGirl.introduction}</p>
+                  <p>{selectedGirl.self_introduction}</p>
                 </div>
               </div>
             </div>
