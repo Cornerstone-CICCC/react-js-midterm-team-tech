@@ -10,17 +10,11 @@ import {
 } from '@/components/ui/dialog';
 import { X } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
-import { initialGirls } from '@/constant/sample';
 import type { Girl } from '@/type';
-
-// Available nationalities list
-const nationalities = Array.from(
-  new Set(initialGirls.map(girl => girl.nationality))
-);
 
 export default function RentalGirlfriendList() {
   // State management
-  const [girls, setGirls] = useState<Girl[]>(initialGirls);
+  const [girls, setGirls] = useState<Girl[]>([]);
   const [nameFilter, setNameFilter] = useState('');
   const [ageRange, setAgeRange] = useState([18, 30]);
   const [heightRange, setHeightRange] = useState([150, 175]);
@@ -35,9 +29,22 @@ export default function RentalGirlfriendList() {
     new Date()
   );
 
+  // Available nationalities list (computed from girls state)
+  const nationalities = Array.from(
+    new Set(girls.map(girl => girl.nationality))
+  ).filter((n): n is string => typeof n === 'string');
+
+  // Fetch girls data from API
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/services`)
+      .then(res => res.json())
+      .then((data: Girl[]) => setGirls(data))
+      .catch(() => setGirls([]));
+  }, []);
+
   // Apply filters
   useEffect(() => {
-    let filteredGirls = initialGirls;
+    let filteredGirls = girls;
 
     // Filter by name
     if (nameFilter) {
@@ -148,7 +155,7 @@ export default function RentalGirlfriendList() {
         <div className="mb-6">
           <Label className="block mb-2 font-medium">Nationality</Label>
           <div className="space-y-2">
-            {nationalities.map(nationality => (
+            {nationalities.map((nationality: string) => (
               <div key={nationality} className="flex items-center">
                 <input
                   type="checkbox"
