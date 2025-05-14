@@ -32,7 +32,9 @@ const createService = async (req: Request, res: Response) => {
 
    } catch (error) {
       console.error(error)
-      res.json(500)
+      res.status(500).json({
+         message: "Error on creating service."
+      })
    }
 }
 
