@@ -11,3 +11,17 @@ export type Girl = {
   available_time: string; // weekend , both
   price_id: string;
 };
+
+export type Order = {
+  id: string;
+  girlName: string;
+  totalPrice: number;
+  paidDate: string;
+};
+
+export type UserProfile = {
+  account: string;
+  password: string;
+  selfIntroduction: string;
+  orders: Order[];
+};
