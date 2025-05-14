@@ -1,0 +1,216 @@
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { Avatar } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import type { UserProfile } from '@/type';
+
+const UserProfilePage = () => {
+  const { id: userId } = useParams<{ id: string }>();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState<UserProfile | null>(null);
+
+  useEffect(() => {
+    if (!userId) return;
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/${userId}`)
+      .then(res => res.json())
+      .then((data: UserProfile) => {
+        setProfile(data);
+        setFormData(data);
+      });
+  }, [userId]);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (!formData) return;
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSave = async () => {
+    if (!formData || !userId) return;
+    await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/${userId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    setProfile(formData);
+    setIsEditing(false);
+  };
+
+  // Format date from ISO to more readable format
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Profile Card */}
+        <Card className="bg-gray-50 border-none shadow-sm">
+          <CardContent className="p-6">
+            <div className="flex flex-col items-center sm:flex-row sm:justify-between">
+              <div className="flex flex-col sm:flex-row items-center gap-6 mb-6 sm:mb-0">
+                <Avatar className="h-24 w-24 border-2 border-gray-200">
+                  <div className="h-full w-full bg-gray-200 rounded-full flex items-center justify-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="40"
+                      height="40"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                  </div>
+                </Avatar>
+                <div className="space-y-4 w-full">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-lg w-40">
+                        ACCOUNT:
+                      </span>
+                      {isEditing ? (
+                        <Input
+                          name="account"
+                          value={formData?.account || ''}
+                          onChange={handleInputChange}
+                          className="max-w-[300px]"
+                        />
+                      ) : (
+                        <span>{profile?.account}</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-lg w-40">
+                        PASSWORD:
+                      </span>
+                      {isEditing ? (
+                        <Input
+                          name="password"
+                          type="password"
+                          value={formData?.password || ''}
+                          onChange={handleInputChange}
+                          className="max-w-[300px]"
+                        />
+                      ) : (
+                        <span>{profile?.password}</span>
+                      )}
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="font-semibold text-lg w-40">
+                        SELF INTRODUCTION:
+                      </span>
+                      {isEditing ? (
+                        <Textarea
+                          name="selfIntroduction"
+                          value={formData?.selfIntroduction || ''}
+                          onChange={handleInputChange}
+                          className="max-w-[300px]"
+                          rows={3}
+                        />
+                      ) : (
+                        <span className="max-w-[300px]">
+                          {profile?.selfIntroduction}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {isEditing ? (
+                <Button
+                  onClick={handleSave}
+                  className="bg-black text-white hover:bg-gray-800 rounded-full px-8 py-2"
+                >
+                  SAVE
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => setIsEditing(true)}
+                  className="bg-black text-white hover:bg-gray-800 rounded-full px-8 py-2"
+                >
+                  EDIT
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Order History */}
+        <div className="space-y-4">
+          <h2 className="text-2xl font-bold">ORDER HISTORY</h2>
+          <Card className="border-none shadow-sm">
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[80px]"></TableHead>
+                    <TableHead>Girl name</TableHead>
+                    <TableHead>Total price</TableHead>
+                    <TableHead>Paid Date</TableHead>
+                    <TableHead>Order id</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {profile?.orders?.map(order => (
+                    <TableRow key={order.id}>
+                      <TableCell>
+                        <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                          </svg>
+                        </div>
+                      </TableCell>
+                      <TableCell>{order.girlName}</TableCell>
+                      <TableCell>
+                        ¥{order.totalPrice.toLocaleString()}
+                      </TableCell>
+                      <TableCell>{formatDate(order.paidDate)}</TableCell>
+                      <TableCell>{order.id}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default UserProfilePage;

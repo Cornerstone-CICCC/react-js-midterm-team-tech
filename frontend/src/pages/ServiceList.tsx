@@ -155,8 +155,8 @@ export default function RentalGirlfriendList() {
         <div className="mb-6">
           <Label className="block mb-2 font-medium">Nationality</Label>
           <div className="space-y-2">
-            {nationalities.map((nationality: string) => (
-              <div key={nationality} className="flex items-center">
+            {nationalities.map((nationality: string, index: number) => (
+              <div key={index} className="flex items-center">
                 <input
                   type="checkbox"
                   id={`nationality-${nationality}`}
@@ -196,9 +196,9 @@ export default function RentalGirlfriendList() {
         {/* Girls listing */}
         {girls.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {girls.map(girl => (
+            {girls.map((girl, index) => (
               <div
-                key={girl.id}
+                key={index}
                 className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105"
               >
                 <div className="relative pb-full">
