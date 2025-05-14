@@ -1,20 +1,43 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import Home from './pages/Home';
-import About from './pages/About';
 import ServiceList from './pages/ServiceList';
 import Admin from './pages/Admin';
 import UserProfilePage from './pages/Profile';
+import SignInPage from './pages/SignIn';
+import SignUpPage from './pages/SignUp';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <Routes>
-      {/* this is test for testing the routing */}
       <Route path="/" element={<Home />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/service-list" element={<ServiceList />} />
-      <Route path="/admin" element={<Admin />} />
-      <Route path="/profile/:id" element={<UserProfilePage />} />
+      <Route path="/signup" element={<SignUpPage />} />
+      <Route path="/signin" element={<SignInPage />} />
+      <Route
+        path="/service-list"
+        element={
+          // <ProtectedRoute>
+          <ServiceList />
+          // </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          // <ProtectedRoute>
+          <Admin />
+          // </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile/:id"
+        element={
+          // <ProtectedRoute>
+          <UserProfilePage />
+          // </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }
