@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -30,10 +30,9 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import type { Girl } from '@/type';
-import { initialGirls } from '@/constant/sample';
 
 const RentalGirlfriendAdmin = () => {
-  const [girlfriends, setGirlfriends] = useState<Girl[]>(initialGirls);
+  const [girlfriends, setGirlfriends] = useState<Girl[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -50,6 +49,14 @@ const RentalGirlfriendAdmin = () => {
     available_time: '', // weekend , both
     price_id: '',
   });
+
+  // Fetch data from API on mount
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/services`)
+      .then(res => res.json())
+      .then((data: Girl[]) => setGirlfriends(data))
+      .catch(() => setGirlfriends([]));
+  }, []);
 
   // Handle input changes
   const handleInputChange = (
@@ -95,19 +102,50 @@ const RentalGirlfriendAdmin = () => {
   };
 
   // Add new girlfriend
-  const handleAdd = () => {
+  const handleAdd = async () => {
+    try {
+      await fetch(`${import.meta.env.VITE_BACKEND_URL}/admin/service`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+    } catch (e) {
+      console.error('Error adding girlfriend:', e);
+    }
     setGirlfriends([...girlfriends, formData]);
     setIsAddDialogOpen(false);
   };
 
   // Update girlfriend
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
+    try {
+      await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/admin/service/${formData.id}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        }
+      );
+    } catch (e) {
+      console.error('Error updating girlfriend:', e);
+    }
     setGirlfriends(girlfriends.map(g => (g.id === formData.id ? formData : g)));
     setIsEditDialogOpen(false);
   };
 
   // Delete girlfriend
-  const handleDelete = () => {
+  const handleDelete = async () => {
+    try {
+      await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/admin/service/${currentGirlfriend?.id}`,
+        {
+          method: 'DELETE',
+        }
+      );
+    } catch (e) {
+      console.error('Error deleting girlfriend:', e);
+    }
     setGirlfriends(girlfriends.filter(g => g.id !== currentGirlfriend?.id));
     setIsDeleteDialogOpen(false);
   };
@@ -126,41 +164,38 @@ const RentalGirlfriendAdmin = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-4">
-          {girlfriends.map(girlfriend => (
+          {girlfriends.map(gf => (
             <Card
-              key={girlfriend.id}
+              key={gf.id}
               className="bg-gray-50 hover:bg-white transition-colors"
             >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <Avatar className="h-12 w-12">
-                      <AvatarImage
-                        src={girlfriend.avatar}
-                        alt={girlfriend.name}
-                      />
+                      <AvatarImage src={gf.avatar} alt={gf.name} />
                       <AvatarFallback className="bg-gray-200">
-                        {girlfriend.name.charAt(0)}
+                        {gf.name.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <h3 className="font-medium">{girlfriend.name}</h3>
+                      <h3 className="font-medium">{gf.name}</h3>
                       <p className="text-sm text-gray-500">
-                        {girlfriend.age} yrs • {girlfriend.nationality} • ¥
-                        {girlfriend.price.toLocaleString()}/hour
+                        {gf.age} yrs • {gf.nationality} • ¥
+                        {gf.price.toLocaleString()}/hour
                       </p>
                     </div>
                   </div>
                   <div className="flex gap-2">
                     <Button
-                      onClick={() => openEditDialog(girlfriend)}
+                      onClick={() => openEditDialog(gf)}
                       variant="outline"
                       className="bg-black text-white hover:bg-gray-800 rounded-full px-6"
                     >
                       Edit
                     </Button>
                     <Button
-                      onClick={() => openDeleteDialog(girlfriend)}
+                      onClick={() => openDeleteDialog(gf)}
                       variant="outline"
                       className="bg-white text-black border-black hover:bg-gray-100 rounded-full px-6"
                     >
