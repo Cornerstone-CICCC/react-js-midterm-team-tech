@@ -2,6 +2,14 @@ import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import serviceRouter from './routes/serviceAdmin.route';
+import orderRouter from './routes/orderClient.route';
+import clientRouter from './routes/serviceClient.route';
+import cookieParser from 'cookie-parser';
+import { publicRouter, protectedRouter } from './routes/user.routes';
+import { purchaseRouter } from './routes/purchase.routes';
+import { authenticateToken } from './middlewares/authMiddleware';
+
 dotenv.config();
 
 
@@ -16,7 +24,16 @@ app.use(
   })
 );
 app.use(express.json());
+app.use(cookieParser());
 
+app.use('/user', publicRouter)
+app.use('/user', authenticateToken, protectedRouter)
+app.use('/purchase', purchaseRouter)
+
+//Routes
+app.use('/admin/service', serviceRouter)
+app.use('/services', clientRouter)
+app.use('/orders', orderRouter)
 
 //Fallback
 app.use((req: Request, res: Response) => {
