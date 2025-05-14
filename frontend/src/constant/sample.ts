@@ -1,0 +1,122 @@
+import type { Girl } from '@/type';
+
+// Sample data
+export const initialGirls: Girl[] = [
+  {
+    id: '1',
+    name: 'Sakura',
+    age: 22,
+    height: 162,
+    nationality: 'Japanese',
+    price: 8000,
+    avatar: '/api/placeholder/300/300',
+    self_introduction:
+      "Hi, I'm Sakura! I love shopping and watching movies. Let's have a great time together!",
+    available_time: 'Mon-Fri, 12:00-20:00',
+    price_id: '',
+  },
+  {
+    id: '2',
+    name: 'Mio',
+    age: 24,
+    height: 158,
+    nationality: 'Japanese',
+    price: 7500,
+    avatar: '/api/placeholder/300/300',
+    self_introduction:
+      "Hello! I'm Mio. I enjoy art galleries and quiet cafes. I'd love to share these experiences with you.",
+    available_time: 'Weekends, 10:00-18:00',
+    price_id: '',
+  },
+  {
+    id: '3',
+    name: 'Ayaka',
+    age: 21,
+    height: 165,
+    nationality: 'Japanese',
+    price: 9000,
+    avatar: '/api/placeholder/300/300',
+    self_introduction:
+      "I'm Ayaka! I'm a university student who loves outdoor activities. Let's create wonderful memories together!",
+    available_time: 'Tue-Sun, 14:00-22:00',
+    price_id: '',
+  },
+  {
+    id: '4',
+    name: 'Reina',
+    age: 23,
+    height: 155,
+    nationality: 'Japanese',
+    price: 8500,
+    avatar: '/api/placeholder/300/300',
+    self_introduction:
+      "Reina here! I'm passionate about music and food. I can show you the best spots in Osaka!",
+    available_time: 'Mon-Sat, 13:00-21:00',
+    price_id: '',
+  },
+  {
+    id: '5',
+    name: 'Yuka',
+    age: 25,
+    height: 160,
+    nationality: 'Japanese',
+    price: 7800,
+    avatar: '/api/placeholder/300/300',
+    self_introduction:
+      "Hey there! I'm Yuka. I love karaoke and theme parks. Let's have some fun together!",
+    available_time: 'Wed-Sun, 11:00-19:00',
+    price_id: '',
+  },
+  {
+    id: '6',
+    name: 'Mai',
+    age: 20,
+    height: 168,
+    nationality: 'Japanese',
+    price: 9500,
+    avatar: '/api/placeholder/300/300',
+    self_introduction:
+      "Hi, I'm Mai! I'm a fashion enthusiast and love trying new restaurants. Looking forward to meeting you!",
+    available_time: 'Mon-Fri, 15:00-23:00',
+    price_id: '',
+  },
+  {
+    id: '7',
+    name: 'Haruka',
+    age: 26,
+    height: 163,
+    nationality: 'Japanese',
+    price: 8000,
+    avatar: '/api/placeholder/300/300',
+    self_introduction:
+      "Hello, I'm Haruka! I enjoy beaches and hot springs. Let me show you around Fukuoka!",
+    available_time: 'Tue-Sun, 12:00-20:00',
+    price_id: '',
+  },
+  {
+    id: '8',
+    name: 'Nana',
+    age: 23,
+    height: 159,
+    nationality: 'Japanese',
+    price: 8200,
+    avatar: '/api/placeholder/300/300',
+    self_introduction:
+      "I'm Nana! I love comedy shows and street food. Looking forward to laughing together!",
+    available_time: 'Wed-Mon, 14:00-22:00',
+    price_id: '',
+  },
+  {
+    id: '9',
+    name: 'Aoi',
+    age: 24,
+    height: 166,
+    nationality: 'Japanese',
+    price: 9200,
+    avatar: '/api/placeholder/300/300',
+    self_introduction:
+      "Aoi here! I'm into photography and hiking. Let's explore the city together!",
+    available_time: 'Thu-Tue, 11:00-19:00',
+    price_id: '',
+  },
+];
