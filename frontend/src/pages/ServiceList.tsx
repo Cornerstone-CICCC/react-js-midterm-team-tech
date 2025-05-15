@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { Slider } from '@/components/ui/slider';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,6 +12,7 @@ import {
 import { X } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import type { Girl } from '@/type';
+import { useNavigate } from 'react-router-dom';
 
 export default function RentalGirlfriendList() {
   // State management
@@ -29,10 +31,27 @@ export default function RentalGirlfriendList() {
     new Date()
   );
 
+  const navigate = useNavigate();
+
   // Available nationalities list (computed from girls state)
   const nationalities = Array.from(
     new Set(girls.map(girl => girl.nationality))
   ).filter((n): n is string => typeof n === 'string');
+
+  // Check URL for payment success parameter
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const isSuccess = params.get('isSuccess');
+    if (isSuccess === 'true') {
+      toast.success('Payment successful! Thank you for your purchase.');
+      params.delete('isSuccess');
+      navigate({ search: params.toString() }, { replace: true });
+    } else if (isSuccess === 'false') {
+      toast.error('Payment was cancelled or failed.');
+      params.delete('isSuccess');
+      navigate({ search: params.toString() }, { replace: true });
+    }
+  }, [navigate]);
 
   // Fetch girls data from API
   useEffect(() => {
