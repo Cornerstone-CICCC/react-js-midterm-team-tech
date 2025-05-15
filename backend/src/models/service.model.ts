@@ -22,6 +22,15 @@ const serviceSchema: Schema = new Schema({
    price: { type: Number, required: true },
    available_time: { type: String, required: true },
    price_id: {type: String, required: true}
+},
+ {
+   toJSON: {
+      virtuals: true,
+      transform: (_doc, ret) => {
+        ret.id = ret._id;
+        delete ret._id;
+      }
+   }
 })
 
 export const Service = mongoose.model<IService>("Service", serviceSchema)

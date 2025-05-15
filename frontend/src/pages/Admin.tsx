@@ -44,10 +44,10 @@ const RentalGirlfriendAdmin = () => {
     height: 160,
     nationality: '',
     price: 5000,
-    avatar: '',
+    avatar: undefined,
     self_introduction: '',
     available_time: '', // weekend , both
-    price_id: '',
+    price_id: ''
   });
 
   // Fetch data from API on mount
@@ -66,6 +66,17 @@ const RentalGirlfriendAdmin = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleImageInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0]
+
+      setFormData(prev => ({
+        ...prev,
+        avatar: file
+      }))
+    }
+  };
+
   // Handle select changes
   const handleSelectChange = (value: string, name: string) => {
     setFormData({ ...formData, [name]: value });
@@ -82,7 +93,7 @@ const RentalGirlfriendAdmin = () => {
       available_time: 'Weekends',
       price: 5000,
       self_introduction: '',
-      avatar: '',
+      avatar: undefined,
       price_id: '',
     });
     setIsAddDialogOpen(true);
@@ -90,6 +101,7 @@ const RentalGirlfriendAdmin = () => {
 
   // Open Edit Dialog
   const openEditDialog = (girlfriend: Girl) => {
+    console.log(girlfriend.price_id)
     setCurrentGirlfriend(girlfriend);
     setFormData({ ...girlfriend });
     setIsEditDialogOpen(true);
@@ -104,16 +116,31 @@ const RentalGirlfriendAdmin = () => {
   // Add new girlfriend
   const handleAdd = async () => {
     try {
-      await fetch(`${import.meta.env.VITE_BACKEND_URL}/admin/service`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
+    const form = new FormData();
+
+    // form.append("id", formData.id)
+    form.append("name", formData.name);
+    form.append("height", String(formData.height));
+    form.append("nationality", formData.nationality);
+    form.append("self_introduction", formData.self_introduction);
+    form.append("price", String(formData.price));
+    form.append("available_time", formData.available_time);
+    form.append("price_id", formData.price_id);
+    form.append("age", String(formData.age));
+    
+    if (formData.avatar) {
+      form.append("avatar", formData.avatar)
+    }
+    await fetch(`${import.meta.env.VITE_BACKEND_URL}/admin/service`, {
+      method: 'POST',
+      body: form,
+    });
+
+      setGirlfriends([...girlfriends, formData]);
+      setIsAddDialogOpen(false);
     } catch (e) {
       console.error('Error adding girlfriend:', e);
     }
-    setGirlfriends([...girlfriends, formData]);
-    setIsAddDialogOpen(false);
   };
 
   // Update girlfriend
@@ -130,7 +157,9 @@ const RentalGirlfriendAdmin = () => {
     } catch (e) {
       console.error('Error updating girlfriend:', e);
     }
-    setGirlfriends(girlfriends.map(g => (g.id === formData.id ? formData : g)));
+    setGirlfriends(girlfriends => girlfriends.map(g => {
+      return (g.id === formData.id ? formData : g)
+    }));
     setIsEditDialogOpen(false);
   };
 
@@ -146,7 +175,9 @@ const RentalGirlfriendAdmin = () => {
     } catch (e) {
       console.error('Error deleting girlfriend:', e);
     }
-    setGirlfriends(girlfriends.filter(g => g.id !== currentGirlfriend?.id));
+    setGirlfriends(girlfriends => girlfriends.filter(g => {
+      return(g.id !== currentGirlfriend?.id)
+    }));
     setIsDeleteDialogOpen(false);
   };
 
@@ -173,7 +204,7 @@ const RentalGirlfriendAdmin = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <Avatar className="h-12 w-12">
-                      <AvatarImage src={gf.avatar} alt={gf.name} />
+                      <AvatarImage src={gf.avatar instanceof File ? URL.createObjectURL(gf.avatar) : gf.avatar} />
                       <AvatarFallback className="bg-gray-200">
                         {gf.name.charAt(0)}
                       </AvatarFallback>
@@ -181,8 +212,8 @@ const RentalGirlfriendAdmin = () => {
                     <div>
                       <h3 className="font-medium">{gf.name}</h3>
                       <p className="text-sm text-gray-500">
-                        {gf.age} yrs • {gf.nationality} • ¥
-                        {gf.price.toLocaleString()}/hour
+                        {gf.age} yrs • {gf.nationality} • $
+                        {gf.price.toLocaleString()}/day
                       </p>
                     </div>
                   </div>
@@ -267,7 +298,7 @@ const RentalGirlfriendAdmin = () => {
               </Select>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="price">Price (per hour / JPY)</Label>
+              <Label htmlFor="price">Price (per day / CAD)</Label>
               <Input
                 id="price"
                 name="price"
@@ -280,10 +311,28 @@ const RentalGirlfriendAdmin = () => {
               <Label htmlFor="introduction">Introduction</Label>
               <Textarea
                 id="introduction"
-                name="introduction"
+                name="self_introduction"
                 value={formData.self_introduction}
                 onChange={handleInputChange}
                 rows={3}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="price_id">Price ID</Label>
+              <Input
+                id="price_id"
+                name="price_id"
+                value={formData.price_id}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="avatar">Avatar</Label>
+              <Input
+                id='avatar'
+                name='avatar'
+                type='file'
+                onChange={handleImageInputChange}
               />
             </div>
           </div>
@@ -359,7 +408,7 @@ const RentalGirlfriendAdmin = () => {
               </Select>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-price">Price (per hour / JPY)</Label>
+              <Label htmlFor="edit-price">Price (per day / CAD)</Label>
               <Input
                 id="edit-price"
                 name="price"
@@ -377,6 +426,25 @@ const RentalGirlfriendAdmin = () => {
                 onChange={handleInputChange}
                 rows={3}
               />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-price_id">Price ID</Label>
+                <Input 
+                id='edit-price_id'
+                name='price_id'
+                type='text'
+                value={formData.price_id}
+                onChange={handleInputChange}
+                />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-avatar">Avatar</Label>
+                <Input 
+                id='edit-avatar'
+                name='avatar'
+                type='file'
+                onChange={handleImageInputChange}
+                />
             </div>
           </div>
           <DialogFooter>
