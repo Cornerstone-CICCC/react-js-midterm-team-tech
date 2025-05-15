@@ -19,10 +19,11 @@ const app = express();
 //Middlewares
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: process.env.FRONTEND_URL!,
     credentials: true, // allow cookies
   })
 );
+console.log(process.env.FRONTEND_URL)
 app.use(express.json());
 app.use(cookieParser());
 
