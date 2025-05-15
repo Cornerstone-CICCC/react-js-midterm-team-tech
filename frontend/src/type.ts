@@ -6,7 +6,7 @@ export type Girl = {
   height: number;
   nationality: string;
   price: number;
-  avatar: string;
+  avatar: File | string | undefined;
   self_introduction: string;
   available_time: string; // weekend , both
   price_id: string;

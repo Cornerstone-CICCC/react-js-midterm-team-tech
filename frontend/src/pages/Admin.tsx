@@ -44,7 +44,7 @@ const RentalGirlfriendAdmin = () => {
     height: 160,
     nationality: '',
     price: 5000,
-    avatar: '',
+    avatar: undefined,
     self_introduction: '',
     available_time: '', // weekend , both
     price_id: '',
@@ -82,7 +82,7 @@ const RentalGirlfriendAdmin = () => {
       available_time: 'Weekends',
       price: 5000,
       self_introduction: '',
-      avatar: '',
+      avatar: undefined,
       price_id: '',
     });
     setIsAddDialogOpen(true);
@@ -173,7 +173,7 @@ const RentalGirlfriendAdmin = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <Avatar className="h-12 w-12">
-                      <AvatarImage src={gf.avatar} alt={gf.name} />
+                      <AvatarImage src={String(gf.avatar)} alt={gf.name} />
                       <AvatarFallback className="bg-gray-200">
                         {gf.name.charAt(0)}
                       </AvatarFallback>
@@ -267,7 +267,7 @@ const RentalGirlfriendAdmin = () => {
               </Select>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="price">Price (per hour / JPY)</Label>
+              <Label htmlFor="price">Price (per day / CAD)</Label>
               <Input
                 id="price"
                 name="price"
@@ -284,6 +284,21 @@ const RentalGirlfriendAdmin = () => {
                 value={formData.self_introduction}
                 onChange={handleInputChange}
                 rows={3}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="avatar">Avatar</Label>
+              <Input
+                id='avatar'
+                name='avatar'
+                type='file'
+                onChange={(e) => {
+                  const selectedFile = e.target.files?.[0]
+                  setFormData((prev) => ({
+                    ...prev,
+                    avatar: selectedFile
+                  }))
+                }}
               />
             </div>
           </div>
@@ -359,7 +374,7 @@ const RentalGirlfriendAdmin = () => {
               </Select>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-price">Price (per hour / JPY)</Label>
+              <Label htmlFor="edit-price">Price (per day / CAD)</Label>
               <Input
                 id="edit-price"
                 name="price"
@@ -377,6 +392,21 @@ const RentalGirlfriendAdmin = () => {
                 onChange={handleInputChange}
                 rows={3}
               />
+            </div>
+            <div>
+              <Label htmlFor="edit-avatar">Avatar</Label>
+                <Input 
+                id='edit-avatar'
+                name='avatar'
+                type='file'
+                onChange={(e) => {
+                  const selectedFile = e.target.files?.[0]
+                  setFormData((prev) => ({
+                    ...prev,
+                    avatar: selectedFile
+                  }))
+                }}
+                />
             </div>
           </div>
           <DialogFooter>
