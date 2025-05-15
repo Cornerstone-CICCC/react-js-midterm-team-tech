@@ -1,16 +1,19 @@
-import Stripe from 'stripe';
+import Stripe from "stripe";
 import { Request, Response } from "express";
 
-const createCheckoutSession = async (request: Request<{}, {}, {price_id: string}>, response: Response) => {
-    const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY!
+const createCheckoutSession = async (
+    request: Request<{}, {}, { price_id: string }>,
+    response: Response
+) => {
+    const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY!;
 
     const stripe = new Stripe(STRIPE_SECRET_KEY, {
-        apiVersion: '2023-10-16' as any
+        apiVersion: "2023-10-16" as any,
     });
 
-    const FRONTEND_URL = process.env.FRONTEND_URL!
+    const FRONTEND_URL = process.env.FRONTEND_URL!;
 
-    const {price_id} = request.body
+    const { price_id } = request.body;
 
     const session = await stripe.checkout.sessions.create({
         line_items: [
@@ -19,14 +22,14 @@ const createCheckoutSession = async (request: Request<{}, {}, {price_id: string}
                 quantity: 1,
             },
         ],
-        mode: 'payment',
-        success_url: `${FRONTEND_URL}/success.html`,
-        cancel_url: `${FRONTEND_URL}/cancel.html`,
+        mode: "payment",
+        success_url: `${FRONTEND_URL}/service-list?isSuccess=true`,
+        cancel_url: `${FRONTEND_URL}/service-list?isSuccess=false`,
     });
-    
-    response.redirect(303, session.url!);
-}
+
+    response.status(200).json({ url: session.url });
+};
 
 export default {
-    createCheckoutSession
-}
+    createCheckoutSession,
+};
