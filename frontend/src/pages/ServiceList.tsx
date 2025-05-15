@@ -32,6 +32,8 @@ export default function RentalGirlfriendList() {
     new Date()
   );
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const navigate = useNavigate();
 
   // Available nationalities list (computed from girls state)
@@ -151,97 +153,126 @@ export default function RentalGirlfriendList() {
     window.location.href = data.url;
   }
 
+  const sideBarWidth = isSidebarOpen ? 'w-64' : 'w-20';
+  const sideBarButtonPosition = isSidebarOpen ? 'flex justify-end' : 'flex justify-start';
+
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-100 relative">
       {/* Filter sidebar */}
-      <div className="w-64 bg-white p-6 shadow-md">
-        <h2 className="text-xl font-bold mb-6">Filter</h2>
-
-        {/* Name filter */}
-        <div className="mb-6">
-          <Label htmlFor="name-filter" className="block mb-2 font-medium">
-            Name
-          </Label>
-          <Input
-            id="name-filter"
-            type="text"
-            placeholder="Enter name"
-            value={nameFilter}
-            onChange={e => setNameFilter(e.target.value)}
-            className="w-full"
-          />
+      <div 
+        className={`absolute top-0 left-0 h-full ${sideBarWidth} bg-white p-6 shadow-md`}
+        style={{zIndex: 9999}}
+      >
+        <div className={sideBarButtonPosition}>
+          <button 
+            className='flex justify-center items-center cursor-pointer'
+            onClick={() => setIsSidebarOpen(prev => !prev)}
+          >
+            {
+              isSidebarOpen 
+                ? <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="black"/>
+                </svg>
+                : <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5 4H19L14 10.5V20L10 16V10.5L5 4Z" fill="black" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+            }
+          </button>
         </div>
+        
 
-        {/* Age filter */}
-        <div className="mb-6">
-          <Label className="block mb-2 font-medium">
-            Age: {ageRange[0]} - {ageRange[1]} years
-          </Label>
-          <Slider
-            defaultValue={ageRange}
-            min={18}
-            max={30}
-            step={1}
-            onValueChange={setAgeRange}
-            className="mb-2"
-          />
-        </div>
-
-        {/* Height filter */}
-        <div className="mb-6">
-          <Label className="block mb-2 font-medium">
-            Height: {heightRange[0]} - {heightRange[1]} cm
-          </Label>
-          <Slider
-            defaultValue={heightRange}
-            min={150}
-            max={175}
-            step={1}
-            onValueChange={setHeightRange}
-            className="mb-2"
-          />
-        </div>
-
-        {/* Price filter */}
-        <div className="mb-6">
-          <Label className="block mb-2 font-medium">
-            Price: ${priceRange[0].toLocaleString()} - $
-            {priceRange[1].toLocaleString()}
-          </Label>
-          <Slider
-            defaultValue={priceRange}
-            min={95}
-            max={200}
-            step={5}
-            onValueChange={setPriceRange}
-            className="mb-2"
-          />
-        </div>
-
-        {/* nationality filter */}
-        <div className="mb-6">
-          <Label className="block mb-2 font-medium">Nationality</Label>
-          <div className="space-y-2">
-            {nationalities.map((nationality: string, index: number) => (
-              <div key={index} className="flex items-center">
-                <input
-                  type="checkbox"
-                  id={`nationality-${nationality}`}
-                  checked={nationalityFilter.includes(nationality)}
-                  onChange={() => toggleNationality(nationality)}
-                  className="mr-2"
-                />
-                <label htmlFor={`nationality-${nationality}`}>
-                  {nationality}
-                </label>
-              </div>
-            ))}
+        {isSidebarOpen && <>
+          <h2 className="text-xl font-bold mb-6">Filter</h2>
+          {/* Name filter */}
+          <div className="mb-6">
+            <Label htmlFor="name-filter" className="block mb-2 font-medium">
+              Name
+            </Label>
+            <Input
+              id="name-filter"
+              type="text"
+              placeholder="Enter name"
+              value={nameFilter}
+              onChange={e => setNameFilter(e.target.value)}
+              className="w-full"
+            />
           </div>
-        </div>
+
+          {/* Age filter */}
+          <div className="mb-6">
+            <Label className="block mb-2 font-medium">
+              Age: {ageRange[0]} - {ageRange[1]} years
+            </Label>
+            <Slider
+              defaultValue={ageRange}
+              min={18}
+              max={30}
+              step={1}
+              onValueChange={setAgeRange}
+              className="mb-2"
+            />
+          </div>
+
+          {/* Height filter */}
+          <div className="mb-6">
+            <Label className="block mb-2 font-medium">
+              Height: {heightRange[0]} - {heightRange[1]} cm
+            </Label>
+            <Slider
+              defaultValue={heightRange}
+              min={150}
+              max={175}
+              step={1}
+              onValueChange={setHeightRange}
+              className="mb-2"
+            />
+          </div>
+
+          {/* Price filter */}
+          <div className="mb-6">
+            <Label className="block mb-2 font-medium">
+              Price: ${priceRange[0].toLocaleString()} - $
+              {priceRange[1].toLocaleString()}
+            </Label>
+            <Slider
+              defaultValue={priceRange}
+              min={95}
+              max={200}
+              step={5}
+              onValueChange={setPriceRange}
+              className="mb-2"
+            />
+          </div>
+
+          {/* nationality filter */}
+          <div className="mb-6">
+            <Label className="block mb-2 font-medium">Nationality</Label>
+            <div className="space-y-2">
+              {nationalities.map((nationality: string, index: number) => (
+                <div key={index} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={`nationality-${nationality}`}
+                    checked={nationalityFilter.includes(nationality)}
+                    onChange={() => toggleNationality(nationality)}
+                    className="mr-2"
+                  />
+                  <label htmlFor={`nationality-${nationality}`}>
+                    {nationality}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>}
+
+        
+
+
       </div>
 
       {/* Main content */}
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-6 pl-26">
         <h1 className="text-3xl font-bold mb-8 text-center">Girlfriends</h1>
 
         {/* Girls listing */}
@@ -363,13 +394,13 @@ export default function RentalGirlfriendList() {
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-between mt-4">
             <button
               onClick={() => setIsRentalModalOpen(false)}
-              className="bg-black text-white px-6 py-2 rounded-full font-bold hover:bg-gray-800 transition-colors w-full sm:w-auto"
+              className="bg-white text-gray-800 border-1 border-gray-800 px-6 py-2 rounded-full font-bold hover:bg-gray-100 transition-colors w-full sm:w-auto cursor-pointer"
             >
               CANCEL
             </button>
             <button
               onClick={handleCheckout}
-              className="bg-black text-white px-6 py-2 rounded-full font-bold hover:bg-gray-800 transition-colors w-full sm:w-auto"
+              className="bg-black text-white px-6 py-2 rounded-full font-bold hover:bg-gray-800 transition-colors w-full sm:w-auto cursor-pointer"
             >
               CHECKOUT
             </button>
