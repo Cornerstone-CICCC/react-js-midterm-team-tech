@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { useState, useEffect, useRef } from 'react';
 import { Slider } from '@/components/ui/slider';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,7 +9,6 @@ import {
   DialogTitle,
   DialogClose,
 } from '@/components/ui/dialog';
-import { X } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import type { Girl } from '@/type';
 import { useNavigate } from 'react-router-dom';
@@ -21,7 +20,9 @@ export default function RentalGirlfriendList() {
   const [ageRange, setAgeRange] = useState([18, 30]);
   const [heightRange, setHeightRange] = useState([150, 175]);
   const [nationalityFilter, setNationalityFilter] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState([5000, 12000]);
+  const [priceRange, setPriceRange] = useState([95, 200]);
+
+  const originalGirls = useRef<Girl[]>([])
 
   // Profile view state
   const [selectedGirl, setSelectedGirl] = useState<Girl | null>(null);
@@ -35,7 +36,7 @@ export default function RentalGirlfriendList() {
 
   // Available nationalities list (computed from girls state)
   const nationalities = Array.from(
-    new Set(girls.map(girl => girl.nationality))
+    new Set(originalGirls.current.map(girl => girl.nationality))
   ).filter((n): n is string => typeof n === 'string');
 
   // Check URL for payment success parameter
@@ -57,13 +58,19 @@ export default function RentalGirlfriendList() {
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/services`)
       .then(res => res.json())
-      .then((data: Girl[]) => setGirls(data))
-      .catch(() => setGirls([]));
+      .then((data: Girl[]) => {
+        originalGirls.current = data
+        setGirls(data)
+      })
+      .catch(() => {
+        originalGirls.current = [];
+        setGirls([])
+      });
   }, []);
 
   // Apply filters
   useEffect(() => {
-    let filteredGirls = girls;
+    let filteredGirls = originalGirls.current;
 
     // Filter by name
     if (nameFilter) {
@@ -119,6 +126,31 @@ export default function RentalGirlfriendList() {
     setIsRentalModalOpen(true);
   };
 
+  const handleCheckout = async () => {
+    setIsRentalModalOpen(false);
+
+    const res = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/purchase/create-checkout-session`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(
+          { 
+            price_id: selectedGirl?.price_id
+          }
+        ),
+      }
+    );
+    if (!res.ok) {
+      console.error('Invalid credentials');
+      return;
+    }
+
+    const data = await res.json();
+
+    window.location.href = data.url;
+  }
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Filter sidebar */}
@@ -170,6 +202,22 @@ export default function RentalGirlfriendList() {
           />
         </div>
 
+        {/* Price filter */}
+        <div className="mb-6">
+          <Label className="block mb-2 font-medium">
+            Price: ${priceRange[0].toLocaleString()} - $
+            {priceRange[1].toLocaleString()}
+          </Label>
+          <Slider
+            defaultValue={priceRange}
+            min={95}
+            max={200}
+            step={5}
+            onValueChange={setPriceRange}
+            className="mb-2"
+          />
+        </div>
+
         {/* nationality filter */}
         <div className="mb-6">
           <Label className="block mb-2 font-medium">Nationality</Label>
@@ -190,27 +238,11 @@ export default function RentalGirlfriendList() {
             ))}
           </div>
         </div>
-
-        {/* Price filter */}
-        <div className="mb-6">
-          <Label className="block mb-2 font-medium">
-            Price: ¥{priceRange[0].toLocaleString()} - ¥
-            {priceRange[1].toLocaleString()}
-          </Label>
-          <Slider
-            defaultValue={priceRange}
-            min={5000}
-            max={12000}
-            step={500}
-            onValueChange={setPriceRange}
-            className="mb-2"
-          />
-        </div>
       </div>
 
       {/* Main content */}
       <div className="flex-1 p-6">
-        <h1 className="text-3xl font-bold mb-8 text-center">Girls List</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center">Girlfriends</h1>
 
         {/* Girls listing */}
         {girls.length > 0 ? (
@@ -228,20 +260,12 @@ export default function RentalGirlfriendList() {
                   />
                 </div>
                 <div className="p-4">
-                  <h3 className="text-xl font-semibold">{girl.name}</h3>
-                  <div className="mt-2 space-y-1 text-gray-600">
-                    <p>Age: {girl.age}</p>
-                    <p>Height: {girl.height} cm</p>
-                    <p>Nationality: {girl.nationality}</p>
-                    <p className="text-lg font-medium text-rose-500">
-                      ¥{girl.price.toLocaleString()} / hour
-                    </p>
-                  </div>
+                  <h3 className="text-xl font-semibold text-center">{girl.name}</h3>
                   <button
                     onClick={() => openProfile(girl)}
-                    className="mt-4 w-full bg-rose-500 hover:bg-rose-600 text-white py-2 rounded-md transition-colors"
+                    className="mt-4 w-full bg-rose-500 cursor-pointer hover:bg-rose-600 text-white py-2 rounded-md transition-colors"
                   >
-                    View Profile
+                    More
                   </button>
                 </div>
               </div>
@@ -270,43 +294,43 @@ export default function RentalGirlfriendList() {
                 </div>
 
                 <div className="mt-6 md:mt-8 space-y-3 w-full max-w-xs mx-auto text-sm md:text-base">
-                  <div className="flex">
-                    <span className="font-semibold w-24 md:w-32">NAME:</span>
-                    <span>{selectedGirl.name}</span>
+                  <div className="flex gap-2">
+                    <span>You Can call Me </span>
+                    <span className="font-semibold">{selectedGirl.name}</span>
                   </div>
-                  <div className="flex">
-                    <span className="font-semibold w-24 md:w-32">AGE:</span>
-                    <span>{selectedGirl.age}</span>
+                  <div className="flex gap-2">
+                    <span>I'm Stopped Counting at </span>
+                    <span className="font-semibold">{selectedGirl.age}</span>
                   </div>
-                  <div className="flex">
-                    <span className="font-semibold w-24 md:w-32">
-                      NATIONALITY:
+                  <div className="flex gap-2">
+                    <span>
+                      and Import From 
                     </span>
-                    <span>{selectedGirl.nationality}</span>
+                    <span className="font-semibold">{selectedGirl.nationality}</span>
                   </div>
-                  <div className="flex">
-                    <span className="font-semibold w-24 md:w-32">PRICE:</span>
-                    <span>¥{selectedGirl.price.toLocaleString()} / hour</span>
+                  <div className="flex gap-2">
+                    <span>My 24h Romance Budget is </span>
+                    <span className="font-semibold">${selectedGirl.price.toLocaleString()} / h</span>
                   </div>
-                  <div className="flex">
-                    <span className="font-semibold w-24 md:w-32">
-                      AVAILABILITY:
+                  <div className="flex gap-2">
+                    <span>
+                      Open for a Memory:
                     </span>
-                    <span>{selectedGirl.available_time}</span>
+                    <span className="font-semibold">{selectedGirl.available_time}</span>
                   </div>
                 </div>
 
                 <button
                   onClick={handleRentNow}
-                  className="mt-6 md:mt-8 bg-black text-white px-6 py-2 md:px-8 md:py-3 rounded-full font-bold hover:bg-gray-800 transition-colors w-full max-w-xs"
+                  className="mt-6 md:mt-8 bg-black text-white px-6 py-2 md:px-8 md:py-3 rounded-full font-bold hover:bg-gray-800 transition-colors w-full max-w-xs cursor-pointer"
                 >
-                  RENT NOW
+                  Borrow Her Heart 💌
                 </button>
               </div>
 
               <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center">
                 <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-4">
-                  SELF INTRODUCTION
+                  BIO
                 </h3>
                 <div className="bg-gray-200 p-3 md:p-4 rounded min-h-32 md:min-h-40 border border-gray-400 text-sm md:text-base">
                   <p>{selectedGirl.self_introduction}</p>
@@ -322,12 +346,11 @@ export default function RentalGirlfriendList() {
         <DialogContent className="w-full max-w-xs sm:max-w-md p-4 sm:p-6">
           <div className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
             <DialogClose className="h-4 w-4">
-              <X className="h-4 w-4" />
               <span className="sr-only">Close</span>
             </DialogClose>
           </div>
           <DialogTitle className="text-center text-lg sm:text-xl font-bold mb-2 sm:mb-4">
-            AVAILABLE DATE: {selectedDate?.toLocaleDateString() || '...'}
+            Choose a day ...
           </DialogTitle>
           <div className="py-2 sm:py-4 flex justify-center">
             <Calendar
@@ -345,12 +368,7 @@ export default function RentalGirlfriendList() {
               CANCEL
             </button>
             <button
-              onClick={() => {
-                setIsRentalModalOpen(false);
-                alert(
-                  'Booking confirmed for ' + selectedDate?.toLocaleDateString()
-                );
-              }}
+              onClick={handleCheckout}
               className="bg-black text-white px-6 py-2 rounded-full font-bold hover:bg-gray-800 transition-colors w-full sm:w-auto"
             >
               CHECKOUT
