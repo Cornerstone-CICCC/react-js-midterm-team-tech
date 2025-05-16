@@ -7,6 +7,8 @@ const protectedRouter = Router();
 publicRouter.post('/signup', userController.signUp);
 publicRouter.post('/login', userController.login);
 publicRouter.post('/logout', userController.logout);
+publicRouter.get('/get-user-cookie', userController.getUserCookie)
+
 protectedRouter.get('/:id', userController.getUserById)
 protectedRouter.put('/:id', userController.editUserProfile)
 

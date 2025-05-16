@@ -153,21 +153,19 @@ export default function RentalGirlfriendList() {
     window.location.href = data.url;
   }
 
-  const sideBarWidth = isSidebarOpen ? 'w-64' : 'w-20';
+  const sideBarWidth = isSidebarOpen ? 'w-64 h-full' : 'w-20 h-auto';
   const sideBarButtonPosition = isSidebarOpen ? 'flex justify-end' : 'flex justify-start';
 
   return (
     <div className="flex min-h-screen bg-gray-100 relative">
       {/* Filter sidebar */}
       <div 
-        className={`absolute top-0 left-0 h-full ${sideBarWidth} bg-white p-6 shadow-md`}
-        style={{zIndex: 9999}}
+        className={`fixed top-1 left-1  ${sideBarWidth} bg-white p-6 shadow-md rounded-lg cursor-pointer`}
+        style={{zIndex: 2}}
+        onClick={() => setIsSidebarOpen(prev => !prev)}
       >
         <div className={sideBarButtonPosition}>
-          <button 
-            className='flex justify-center items-center cursor-pointer'
-            onClick={() => setIsSidebarOpen(prev => !prev)}
-          >
+          <button className='flex justify-center items-center cursor-pointer'>
             {
               isSidebarOpen 
                 ? <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -179,8 +177,6 @@ export default function RentalGirlfriendList() {
             }
           </button>
         </div>
-        
-
         {isSidebarOpen && <>
           <h2 className="text-xl font-bold mb-6">Filter</h2>
           {/* Name filter */}
@@ -265,19 +261,15 @@ export default function RentalGirlfriendList() {
             </div>
           </div>
         </>}
-
-        
-
-
       </div>
 
       {/* Main content */}
-      <div className="flex-1 p-6 pl-26">
+      <div className="flex-1 p-6">
         <h1 className="text-3xl font-bold mb-8 text-center">Girlfriends</h1>
 
         {/* Girls listing */}
         {girls.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {girls.map((girl, index) => (
               <div
                 key={index}
@@ -389,9 +381,16 @@ export default function RentalGirlfriendList() {
               selected={selectedDate}
               onSelect={setSelectedDate}
               className="mx-auto"
+              disabled={(date) => {
+                const today = new Date();
+                const yesterday = new Date(today);
+                yesterday.setDate(today.getDate() - 1);
+
+                return date < yesterday
+              }}
             />
           </div>
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-between mt-4">
+          <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 justify-between mt-4">
             <button
               onClick={() => setIsRentalModalOpen(false)}
               className="bg-white text-gray-800 border-1 border-gray-800 px-6 py-2 rounded-full font-bold hover:bg-gray-100 transition-colors w-full sm:w-auto cursor-pointer"
