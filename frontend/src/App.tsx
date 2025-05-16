@@ -7,10 +7,14 @@ import UserProfilePage from './pages/Profile';
 import SignInPage from './pages/SignIn';
 import SignUpPage from './pages/SignUp';
 import ProtectedRoute from './components/ProtectedRoute';
+import MainLayout from './components/MainLayout';
+
+
 
 function App() {
   return (
     <Routes>
+      <Route element={<MainLayout />}>
       <Route path="/" element={<Home />} />
       <Route path="/signup" element={<SignUpPage />} />
       <Route path="/signin" element={<SignInPage />} />
@@ -38,7 +42,9 @@ function App() {
           // </ProtectedRoute>
         }
       />
+      </Route>
     </Routes>
+    
   );
 }
 
