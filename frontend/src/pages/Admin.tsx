@@ -79,6 +79,9 @@ const RentalGirlfriendAdmin = () => {
 
   // Handle select changes
   const handleSelectChange = (value: string, name: string) => {
+    console.log(formData)
+    console.log(name)
+    console.log(formData)
     setFormData({ ...formData, [name]: value });
   };
 
@@ -391,7 +394,7 @@ const RentalGirlfriendAdmin = () => {
                 name="availability"
                 value={formData.available_time}
                 onValueChange={value =>
-                  handleSelectChange(value, 'availability')
+                  handleSelectChange(value, 'available_time')
                 }
               >
                 <SelectTrigger>

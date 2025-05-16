@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from 'bcrypt';
 import { IUser, User } from '../models/user.model';
 import { generateToken } from '../utils/jwt';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 const signUp = async (request: Request<{}, {}, IUser>, response: Response) => {
     try {
@@ -50,7 +51,7 @@ const login = async (request: Request, response: Response) => {
         const isValid: boolean = await bcrypt.compare(password, user.password);
 
         if (isValid) {  
-            const token = generateToken({username})
+            const token = generateToken({username, role: user.role})
 
             response.cookie('token', token, {
                 httpOnly: true,
@@ -120,10 +121,37 @@ const editUserProfile = async (request: Request<{id: string}, {}, Partial<IUser>
     }
 }
 
+const getUserCookie = (request: Request, response: Response) => {
+    const SECRET_KEY = process.env.JWT_SECRET || 'jfdhuifhkewuhr';
+    const authHeader = request.headers['authorization'];
+    const token = authHeader?.split(' ')[1]; // Bearer <token>
+
+    if (!token) {
+        response.status(401).json({ message: 'No token provided' });
+
+        return
+    }
+
+    try {
+        const decoded = jwt.verify(token, SECRET_KEY);
+
+        if (decoded.role === 'client') {
+            response.status(422).json({message: 'Permission not allowed'});    
+        }
+
+        response.status(200).json(decoded);
+    } catch (err) {
+        response.status(403).json({ message: 'Invalid token' });
+
+        return 
+    }
+}
+
 export default {
     signUp,
     login,
     logout,
     getUserById,
-    editUserProfile
+    editUserProfile,
+    getUserCookie
 }
