@@ -37,9 +37,20 @@ export default function RentalGirlfriendList() {
   const navigate = useNavigate();
 
   // Available nationalities list (computed from girls state)
-  const nationalities = Array.from(
-    new Set(originalGirls.current.map(girl => girl.nationality))
-  ).filter((n): n is string => typeof n === 'string');
+  const nationalities = [
+    'Japanese',
+    'Canadian',
+    'Korean',
+    'American',
+    'Australian',
+    'Swedish',
+    'Taiwanese',
+    'Kenyan',
+    'Singaporean',
+    'Mexican',
+    'German',
+    'French'
+  ]
 
   // Check URL for payment success parameter
   useEffect(() => {
@@ -162,9 +173,11 @@ export default function RentalGirlfriendList() {
       <div 
         className={`fixed top-[68px] left-2 ${sideBarWidth} bg-white p-4 shadow-md rounded-lg cursor-pointer`}
         style={{zIndex: 2}}
-        onClick={() => setIsSidebarOpen(prev => !prev)}
       >
-        <div className={`${sideBarButtonPosition} w-auto`}>
+        <div 
+          className={`${sideBarButtonPosition} w-auto`}
+          onClick={() => setIsSidebarOpen(prev => !prev)}
+        >
           <button className='flex justify-center items-center cursor-pointer'>
             {
               isSidebarOpen 
