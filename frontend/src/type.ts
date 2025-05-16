@@ -20,8 +20,11 @@ export type Order = {
 };
 
 export type UserProfile = {
-  account: string;
+  _id: string;
+  username: string;
   password: string;
-  selfIntroduction: string;
-  orders: Order[];
+  email: string;
+  role: string;
+  selfIrontroduction: string;
+  age: number;
 };

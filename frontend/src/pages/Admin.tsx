@@ -30,6 +30,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import type { Girl } from '@/type';
+import { useNavigate } from 'react-router-dom';
 
 const RentalGirlfriendAdmin = () => {
   const [girlfriends, setGirlfriends] = useState<Girl[]>([]);
@@ -47,12 +48,31 @@ const RentalGirlfriendAdmin = () => {
     avatar: undefined,
     self_introduction: '',
     available_time: '', // weekend , both
-    price_id: ''
+    price_id: '',
   });
+
+  const navigate = useNavigate();
 
   // Fetch data from API on mount
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/services`)
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/get-user-cookie`, {
+      credentials: 'include',
+    })
+      .then(async res => {
+        if (!res.ok) throw new Error('No user');
+        const data = await res.json();
+        console.log('User data:ADMIN', data);
+        if (data && data.role !== 'admin') {
+          navigate('/service-list', { replace: true });
+        }
+      })
+      .catch(() => {
+        console.log('No user data');
+      });
+
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/services`, {
+      credentials: 'include',
+    })
       .then(res => res.json())
       .then((data: Girl[]) => setGirlfriends(data))
       .catch(() => setGirlfriends([]));
@@ -68,20 +88,20 @@ const RentalGirlfriendAdmin = () => {
 
   const handleImageInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0]
+      const file = e.target.files[0];
 
       setFormData(prev => ({
         ...prev,
-        avatar: file
-      }))
+        avatar: file,
+      }));
     }
   };
 
   // Handle select changes
   const handleSelectChange = (value: string, name: string) => {
-    console.log(formData)
-    console.log(name)
-    console.log(formData)
+    console.log(formData);
+    console.log(name);
+    console.log(formData);
     setFormData({ ...formData, [name]: value });
   };
 
@@ -104,7 +124,7 @@ const RentalGirlfriendAdmin = () => {
 
   // Open Edit Dialog
   const openEditDialog = (girlfriend: Girl) => {
-    console.log(girlfriend.price_id)
+    console.log(girlfriend.price_id);
     setCurrentGirlfriend(girlfriend);
     setFormData({ ...girlfriend });
     setIsEditDialogOpen(true);
@@ -119,25 +139,26 @@ const RentalGirlfriendAdmin = () => {
   // Add new girlfriend
   const handleAdd = async () => {
     try {
-    const form = new FormData();
+      const form = new FormData();
 
-    // form.append("id", formData.id)
-    form.append("name", formData.name);
-    form.append("height", String(formData.height));
-    form.append("nationality", formData.nationality);
-    form.append("self_introduction", formData.self_introduction);
-    form.append("price", String(formData.price));
-    form.append("available_time", formData.available_time);
-    form.append("price_id", formData.price_id);
-    form.append("age", String(formData.age));
-    
-    if (formData.avatar) {
-      form.append("avatar", formData.avatar)
-    }
-    await fetch(`${import.meta.env.VITE_BACKEND_URL}/admin/service`, {
-      method: 'POST',
-      body: form,
-    });
+      // form.append("id", formData.id)
+      form.append('name', formData.name);
+      form.append('height', String(formData.height));
+      form.append('nationality', formData.nationality);
+      form.append('self_introduction', formData.self_introduction);
+      form.append('price', String(formData.price));
+      form.append('available_time', formData.available_time);
+      form.append('price_id', formData.price_id);
+      form.append('age', String(formData.age));
+
+      if (formData.avatar) {
+        form.append('avatar', formData.avatar);
+      }
+      await fetch(`${import.meta.env.VITE_BACKEND_URL}/admin/service`, {
+        credentials: 'include',
+        method: 'POST',
+        body: form,
+      });
 
       setGirlfriends([...girlfriends, formData]);
       setIsAddDialogOpen(false);
@@ -152,6 +173,7 @@ const RentalGirlfriendAdmin = () => {
       await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/admin/service/${formData.id}`,
         {
+          credentials: 'include',
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData),
@@ -160,9 +182,11 @@ const RentalGirlfriendAdmin = () => {
     } catch (e) {
       console.error('Error updating girlfriend:', e);
     }
-    setGirlfriends(girlfriends => girlfriends.map(g => {
-      return (g.id === formData.id ? formData : g)
-    }));
+    setGirlfriends(girlfriends =>
+      girlfriends.map(g => {
+        return g.id === formData.id ? formData : g;
+      })
+    );
     setIsEditDialogOpen(false);
   };
 
@@ -173,14 +197,17 @@ const RentalGirlfriendAdmin = () => {
         `${import.meta.env.VITE_BACKEND_URL}/admin/service/${currentGirlfriend?.id}`,
         {
           method: 'DELETE',
+          credentials: 'include',
         }
       );
     } catch (e) {
       console.error('Error deleting girlfriend:', e);
     }
-    setGirlfriends(girlfriends => girlfriends.filter(g => {
-      return(g.id !== currentGirlfriend?.id)
-    }));
+    setGirlfriends(girlfriends =>
+      girlfriends.filter(g => {
+        return g.id !== currentGirlfriend?.id;
+      })
+    );
     setIsDeleteDialogOpen(false);
   };
 
@@ -207,7 +234,13 @@ const RentalGirlfriendAdmin = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <Avatar className="h-12 w-12">
-                      <AvatarImage src={gf.avatar instanceof File ? URL.createObjectURL(gf.avatar) : gf.avatar} />
+                      <AvatarImage
+                        src={
+                          gf.avatar instanceof File
+                            ? URL.createObjectURL(gf.avatar)
+                            : gf.avatar
+                        }
+                      />
                       <AvatarFallback className="bg-gray-200">
                         {gf.name.charAt(0)}
                       </AvatarFallback>
@@ -332,9 +365,9 @@ const RentalGirlfriendAdmin = () => {
             <div className="grid gap-2">
               <Label htmlFor="avatar">Avatar</Label>
               <Input
-                id='avatar'
-                name='avatar'
-                type='file'
+                id="avatar"
+                name="avatar"
+                type="file"
                 onChange={handleImageInputChange}
               />
             </div>
@@ -432,22 +465,22 @@ const RentalGirlfriendAdmin = () => {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="edit-price_id">Price ID</Label>
-                <Input 
-                id='edit-price_id'
-                name='price_id'
-                type='text'
+              <Input
+                id="edit-price_id"
+                name="price_id"
+                type="text"
                 value={formData.price_id}
                 onChange={handleInputChange}
-                />
+              />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="edit-avatar">Avatar</Label>
-                <Input 
-                id='edit-avatar'
-                name='avatar'
-                type='file'
+              <Input
+                id="edit-avatar"
+                name="avatar"
+                type="file"
                 onChange={handleImageInputChange}
-                />
+              />
             </div>
           </div>
           <DialogFooter>
