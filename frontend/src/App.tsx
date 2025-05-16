@@ -6,7 +6,6 @@ import Admin from './pages/Admin';
 import UserProfilePage from './pages/Profile';
 import SignInPage from './pages/SignIn';
 import SignUpPage from './pages/SignUp';
-import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './components/MainLayout';
 
 

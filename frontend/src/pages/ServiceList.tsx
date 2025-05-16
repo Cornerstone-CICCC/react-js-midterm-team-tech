@@ -153,25 +153,25 @@ export default function RentalGirlfriendList() {
     window.location.href = data.url;
   }
 
-  const sideBarWidth = isSidebarOpen ? 'w-64 h-full' : 'w-20 h-auto';
-  const sideBarButtonPosition = isSidebarOpen ? 'flex justify-end' : 'flex justify-start';
+  const sideBarWidth = isSidebarOpen ? 'w-64 h-full' : 'w-14 h-auto';
+  const sideBarButtonPosition = isSidebarOpen ? 'flex justify-end' : 'flex justify-center';
 
   return (
-    <div className="flex min-h-screen bg-gray-100 relative">
+    <div className="flex min-h-screen bg-[radial-gradient(circle_at_10%_20%,rgba(255,192,203,0.3),transparent_70%),radial-gradient(circle_at_90%_80%,rgba(255,182,193,0.2),transparent_70%)]">
       {/* Filter sidebar */}
       <div 
-        className={`fixed top-1 left-1  ${sideBarWidth} bg-white p-6 shadow-md rounded-lg cursor-pointer`}
+        className={`fixed top-[68px] left-2 ${sideBarWidth} bg-white p-4 shadow-md rounded-lg cursor-pointer`}
         style={{zIndex: 2}}
         onClick={() => setIsSidebarOpen(prev => !prev)}
       >
-        <div className={sideBarButtonPosition}>
+        <div className={`${sideBarButtonPosition} w-auto`}>
           <button className='flex justify-center items-center cursor-pointer'>
             {
               isSidebarOpen 
-                ? <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                ? <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="black"/>
                 </svg>
-                : <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                : <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M5 4H19L14 10.5V20L10 16V10.5L5 4Z" fill="black" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
             }
@@ -277,7 +277,7 @@ export default function RentalGirlfriendList() {
               >
                 <div className="relative pb-full">
                   <img
-                    src={girl.avatar}
+                    src={girl.avatar as string}
                     alt={girl.name}
                     className="absolute w-full h-full object-cover"
                   />
@@ -310,7 +310,7 @@ export default function RentalGirlfriendList() {
               <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col items-center">
                 <div className="rounded-full overflow-hidden w-40 h-40 md:w-64 md:h-64 border-2 border-black mx-auto">
                   <img
-                    src={selectedGirl.avatar}
+                    src={selectedGirl.avatar as string}
                     alt={selectedGirl.name}
                     className="w-full h-full object-cover"
                   />
