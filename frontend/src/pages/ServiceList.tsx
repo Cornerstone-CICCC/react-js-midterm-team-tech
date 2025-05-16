@@ -22,7 +22,7 @@ export default function RentalGirlfriendList() {
   const [nationalityFilter, setNationalityFilter] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState([95, 200]);
 
-  const originalGirls = useRef<Girl[]>([])
+  const originalGirls = useRef<Girl[]>([]);
 
   // Profile view state
   const [selectedGirl, setSelectedGirl] = useState<Girl | null>(null);
@@ -49,8 +49,8 @@ export default function RentalGirlfriendList() {
     'Singaporean',
     'Mexican',
     'German',
-    'French'
-  ]
+    'French',
+  ];
 
   // Check URL for payment success parameter
   useEffect(() => {
@@ -69,15 +69,17 @@ export default function RentalGirlfriendList() {
 
   // Fetch girls data from API
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/services`)
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/services`, {
+      credentials: 'include',
+    })
       .then(res => res.json())
       .then((data: Girl[]) => {
-        originalGirls.current = data
-        setGirls(data)
+        originalGirls.current = data;
+        setGirls(data);
       })
       .catch(() => {
         originalGirls.current = [];
-        setGirls([])
+        setGirls([]);
       });
   }, []);
 
@@ -146,12 +148,11 @@ export default function RentalGirlfriendList() {
       `${import.meta.env.VITE_BACKEND_URL}/purchase/create-checkout-session`,
       {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(
-          { 
-            price_id: selectedGirl?.price_id
-          }
-        ),
+        body: JSON.stringify({
+          price_id: selectedGirl?.price_id,
+        }),
       }
     );
     if (!res.ok) {
@@ -162,118 +163,144 @@ export default function RentalGirlfriendList() {
     const data = await res.json();
 
     window.location.href = data.url;
-  }
+  };
 
   const sideBarWidth = isSidebarOpen ? 'w-64 h-full' : 'w-14 h-auto';
-  const sideBarButtonPosition = isSidebarOpen ? 'flex justify-end' : 'flex justify-center';
+  const sideBarButtonPosition = isSidebarOpen
+    ? 'flex justify-end'
+    : 'flex justify-center';
 
   return (
     <div className="flex min-h-screen bg-[radial-gradient(circle_at_10%_20%,rgba(255,192,203,0.3),transparent_70%),radial-gradient(circle_at_90%_80%,rgba(255,182,193,0.2),transparent_70%)]">
       {/* Filter sidebar */}
-      <div 
+      <div
         className={`fixed top-[68px] left-2 ${sideBarWidth} bg-white p-4 shadow-md rounded-lg cursor-pointer`}
-        style={{zIndex: 2}}
+        style={{ zIndex: 2 }}
       >
-        <div 
+        <div
           className={`${sideBarButtonPosition} w-auto`}
           onClick={() => setIsSidebarOpen(prev => !prev)}
         >
-          <button className='flex justify-center items-center cursor-pointer'>
-            {
-              isSidebarOpen 
-                ? <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="black"/>
-                </svg>
-                : <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5 4H19L14 10.5V20L10 16V10.5L5 4Z" fill="black" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-            }
+          <button className="flex justify-center items-center cursor-pointer">
+            {isSidebarOpen ? (
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z"
+                  fill="black"
+                />
+              </svg>
+            ) : (
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5 4H19L14 10.5V20L10 16V10.5L5 4Z"
+                  fill="black"
+                  stroke="black"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
           </button>
         </div>
-        {isSidebarOpen && <>
-          <h2 className="text-xl font-bold mb-6">Filter</h2>
-          {/* Name filter */}
-          <div className="mb-6">
-            <Label htmlFor="name-filter" className="block mb-2 font-medium">
-              Name
-            </Label>
-            <Input
-              id="name-filter"
-              type="text"
-              placeholder="Enter name"
-              value={nameFilter}
-              onChange={e => setNameFilter(e.target.value)}
-              className="w-full"
-            />
-          </div>
-
-          {/* Age filter */}
-          <div className="mb-6">
-            <Label className="block mb-2 font-medium">
-              Age: {ageRange[0]} - {ageRange[1]} years
-            </Label>
-            <Slider
-              defaultValue={ageRange}
-              min={18}
-              max={30}
-              step={1}
-              onValueChange={setAgeRange}
-              className="mb-2"
-            />
-          </div>
-
-          {/* Height filter */}
-          <div className="mb-6">
-            <Label className="block mb-2 font-medium">
-              Height: {heightRange[0]} - {heightRange[1]} cm
-            </Label>
-            <Slider
-              defaultValue={heightRange}
-              min={150}
-              max={175}
-              step={1}
-              onValueChange={setHeightRange}
-              className="mb-2"
-            />
-          </div>
-
-          {/* Price filter */}
-          <div className="mb-6">
-            <Label className="block mb-2 font-medium">
-              Price: ${priceRange[0].toLocaleString()} - $
-              {priceRange[1].toLocaleString()}
-            </Label>
-            <Slider
-              defaultValue={priceRange}
-              min={95}
-              max={200}
-              step={5}
-              onValueChange={setPriceRange}
-              className="mb-2"
-            />
-          </div>
-
-          {/* nationality filter */}
-          <div className="mb-6">
-            <Label className="block mb-2 font-medium">Nationality</Label>
-            <div className="space-y-2">
-              {nationalities.map((nationality: string, index: number) => (
-                <div key={index} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id={`nationality-${nationality}`}
-                    checked={nationalityFilter.includes(nationality)}
-                    onChange={() => toggleNationality(nationality)}
-                    className="mr-2"
-                  />
-                  <label htmlFor={`nationality-${nationality}`}>
-                    {nationality}
-                  </label>
-                </div>
-              ))}
+        {isSidebarOpen && (
+          <>
+            <h2 className="text-xl font-bold mb-6">Filter</h2>
+            {/* Name filter */}
+            <div className="mb-6">
+              <Label htmlFor="name-filter" className="block mb-2 font-medium">
+                Name
+              </Label>
+              <Input
+                id="name-filter"
+                type="text"
+                placeholder="Enter name"
+                value={nameFilter}
+                onChange={e => setNameFilter(e.target.value)}
+                className="w-full"
+              />
             </div>
-          </div>
-        </>}
+
+            {/* Age filter */}
+            <div className="mb-6">
+              <Label className="block mb-2 font-medium">
+                Age: {ageRange[0]} - {ageRange[1]} years
+              </Label>
+              <Slider
+                defaultValue={ageRange}
+                min={18}
+                max={30}
+                step={1}
+                onValueChange={setAgeRange}
+                className="mb-2"
+              />
+            </div>
+
+            {/* Height filter */}
+            <div className="mb-6">
+              <Label className="block mb-2 font-medium">
+                Height: {heightRange[0]} - {heightRange[1]} cm
+              </Label>
+              <Slider
+                defaultValue={heightRange}
+                min={150}
+                max={175}
+                step={1}
+                onValueChange={setHeightRange}
+                className="mb-2"
+              />
+            </div>
+
+            {/* Price filter */}
+            <div className="mb-6">
+              <Label className="block mb-2 font-medium">
+                Price: ${priceRange[0].toLocaleString()} - $
+                {priceRange[1].toLocaleString()}
+              </Label>
+              <Slider
+                defaultValue={priceRange}
+                min={95}
+                max={200}
+                step={5}
+                onValueChange={setPriceRange}
+                className="mb-2"
+              />
+            </div>
+
+            {/* nationality filter */}
+            <div className="mb-6">
+              <Label className="block mb-2 font-medium">Nationality</Label>
+              <div className="space-y-2">
+                {nationalities.map((nationality: string, index: number) => (
+                  <div key={index} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={`nationality-${nationality}`}
+                      checked={nationalityFilter.includes(nationality)}
+                      onChange={() => toggleNationality(nationality)}
+                      className="mr-2"
+                    />
+                    <label htmlFor={`nationality-${nationality}`}>
+                      {nationality}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Main content */}
@@ -296,7 +323,9 @@ export default function RentalGirlfriendList() {
                   />
                 </div>
                 <div className="p-4">
-                  <h3 className="text-xl font-semibold text-center">{girl.name}</h3>
+                  <h3 className="text-xl font-semibold text-center">
+                    {girl.name}
+                  </h3>
                   <button
                     onClick={() => openProfile(girl)}
                     className="mt-4 w-full bg-rose-500 cursor-pointer hover:bg-rose-600 text-white py-2 rounded-md transition-colors"
@@ -339,20 +368,22 @@ export default function RentalGirlfriendList() {
                     <span className="font-semibold">{selectedGirl.age}</span>
                   </div>
                   <div className="flex gap-2">
-                    <span>
-                      and Import From 
+                    <span>and Import From</span>
+                    <span className="font-semibold">
+                      {selectedGirl.nationality}
                     </span>
-                    <span className="font-semibold">{selectedGirl.nationality}</span>
                   </div>
                   <div className="flex gap-2">
                     <span>My 24h Romance Budget is </span>
-                    <span className="font-semibold">${selectedGirl.price.toLocaleString()} / h</span>
+                    <span className="font-semibold">
+                      ${selectedGirl.price.toLocaleString()} / h
+                    </span>
                   </div>
                   <div className="flex gap-2">
-                    <span>
-                      Open for a Memory:
+                    <span>Open for a Memory:</span>
+                    <span className="font-semibold">
+                      {selectedGirl.available_time}
                     </span>
-                    <span className="font-semibold">{selectedGirl.available_time}</span>
                   </div>
                 </div>
 
@@ -394,12 +425,12 @@ export default function RentalGirlfriendList() {
               selected={selectedDate}
               onSelect={setSelectedDate}
               className="mx-auto"
-              disabled={(date) => {
+              disabled={date => {
                 const today = new Date();
                 const yesterday = new Date(today);
                 yesterday.setDate(today.getDate() - 1);
 
-                return date < yesterday
+                return date < yesterday;
               }}
             />
           </div>

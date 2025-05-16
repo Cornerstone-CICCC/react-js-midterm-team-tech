@@ -23,7 +23,10 @@ const UserProfilePage = () => {
 
   useEffect(() => {
     if (!userId) return;
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/${userId}`)
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/${userId}`, {
+      method: 'GET',
+      credentials: 'include',
+    })
       .then(res => res.json())
       .then((data: UserProfile) => {
         setProfile(data);
@@ -43,6 +46,7 @@ const UserProfilePage = () => {
     if (!formData || !userId) return;
     await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/${userId}`, {
       method: 'PUT',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     });
@@ -95,12 +99,12 @@ const UserProfilePage = () => {
                       {isEditing ? (
                         <Input
                           name="account"
-                          value={formData?.account || ''}
+                          value={formData?.username || ''}
                           onChange={handleInputChange}
                           className="max-w-[300px]"
                         />
                       ) : (
-                        <span>{profile?.account}</span>
+                        <span>{profile?.username}</span>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
@@ -126,14 +130,15 @@ const UserProfilePage = () => {
                       {isEditing ? (
                         <Textarea
                           name="selfIntroduction"
-                          value={formData?.selfIntroduction || ''}
+                          value={formData?.email || ''}
                           onChange={handleInputChange}
                           className="max-w-[300px]"
                           rows={3}
                         />
                       ) : (
                         <span className="max-w-[300px]">
-                          {profile?.selfIntroduction}
+                          {profile?.selfIrontroduction ||
+                            'Hi, Nice to meet you !'}
                         </span>
                       )}
                     </div>
@@ -175,7 +180,7 @@ const UserProfilePage = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {profile?.orders?.map(order => (
+                  {/* {profile?.orders?.map(order => (
                     <TableRow key={order.id}>
                       <TableCell>
                         <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center">
@@ -202,7 +207,7 @@ const UserProfilePage = () => {
                       <TableCell>{formatDate(order.paidDate)}</TableCell>
                       <TableCell>{order.id}</TableCell>
                     </TableRow>
-                  ))}
+                  ))} */}
                 </TableBody>
               </Table>
             </CardContent>
