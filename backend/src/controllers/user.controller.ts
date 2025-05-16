@@ -133,7 +133,7 @@ const getUserCookie = (request: Request, response: Response) => {
     }
 
     try {
-        const decoded = jwt.verify(token, SECRET_KEY);
+        const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
 
         if (decoded.role === 'client') {
             response.status(422).json({message: 'Permission not allowed'});    
