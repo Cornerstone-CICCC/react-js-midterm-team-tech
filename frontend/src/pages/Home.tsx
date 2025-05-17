@@ -1,8 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import {motion} from "framer-motion"
+import { motion } from 'framer-motion';
 import { Heart } from 'lucide-react';
-
 
 function getRandomStyles() {
   return {
@@ -55,14 +54,23 @@ function Home() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-      > 
+      >
         <motion.h1
           className="text-5xl font-extrabold text-pink-700 drop-shadow mb-6"
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.6 }}
         >
-          Welcome to <br /> Rental Girlfriend Service
+          Welcome to
+        </motion.h1>
+
+        <motion.h1
+          className="text-8xl font-extrabold text-pink-700 drop-shadow mb-6"
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.6 }}
+        >
+          Daisuki
         </motion.h1>
 
         <motion.p
@@ -76,7 +84,7 @@ function Home() {
 
         {/* Im trying to edit the button*/}
         <motion.div
-          className="relative inline-block"
+          className="relative inline-block rounded-full"
           whileHover={{
             scale: 1.08,
             boxShadow: '0px 12px 30px rgba(236, 72, 153, 0.5)',
@@ -86,7 +94,6 @@ function Home() {
             transition: { type: 'spring', stiffness: 300, damping: 10 },
           }}
         >
-
           <motion.span
             className="absolute inset-0 rounded-full bg-pink-300 opacity-30"
             initial={{ scale: 0, opacity: 0 }}
@@ -97,7 +104,7 @@ function Home() {
             }}
           />
           <Link to="/signin">
-            <Button className="relative z-10 px-8 py-4 text-lg bg-pink-600 hover:bg-pink-700 text-white rounded-full shadow-xl transition-all duration-300">
+            <Button className="relative z-10 px-8 py-4 text-lg bg-pink-600 hover:bg-pink-700 text-white rounded-full shadow-xl transition-all duration-300 cursor-pointer">
               Sign In / Login Here
             </Button>
           </Link>

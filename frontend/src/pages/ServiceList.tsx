@@ -20,7 +20,7 @@ export default function RentalGirlfriendList() {
   const [ageRange, setAgeRange] = useState([18, 30]);
   const [heightRange, setHeightRange] = useState([150, 175]);
   const [nationalityFilter, setNationalityFilter] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState([95, 200]);
+  const [priceRange, setPriceRange] = useState([90, 200]);
 
   const originalGirls = useRef<Girl[]>([]);
 
@@ -271,7 +271,7 @@ export default function RentalGirlfriendList() {
               </Label>
               <Slider
                 defaultValue={priceRange}
-                min={95}
+                min={90}
                 max={200}
                 step={5}
                 onValueChange={setPriceRange}
@@ -309,7 +309,10 @@ export default function RentalGirlfriendList() {
 
         {/* Girls listing */}
         {girls.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+            style={{ direction: 'rtl' }}
+          >
             {girls.map((girl, index) => (
               <div
                 key={index}

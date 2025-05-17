@@ -66,30 +66,18 @@ const UserInfoModal = ({
                     className="border rounded px-2 py-1 w-full"
                   />
                 </div>
-                <div>
-                  <span className="font-semibold">Role:</span>{' '}
-                  <select
-                    name="role"
-                    value={editForm.role}
-                    onChange={handleEditChange}
-                    className="border rounded px-2 py-1 w-full"
-                  >
-                    <option value="client">client</option>
-                    <option value="admin">admin</option>
-                  </select>
-                </div>
-                <div className="flex gap-2 mt-4">
-                  <button
-                    onClick={handleEditSave}
-                    className="bg-pink-600 text-white px-4 py-1 rounded hover:bg-pink-700"
-                  >
-                    Save
-                  </button>
+                <div className="flex mt-4 justify-between">
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="bg-gray-300 text-black px-4 py-1 rounded hover:bg-gray-400"
+                    className="bg-gray-300 text-black px-4 py-1 rounded hover:bg-gray-400 cursor-pointer"
                   >
                     Cancel
+                  </button>
+                  <button
+                    onClick={handleEditSave}
+                    className="bg-pink-600 text-white px-4 py-1 rounded hover:bg-pink-700 cursor-pointer"
+                  >
+                    Save
                   </button>
                 </div>
               </>
@@ -105,13 +93,10 @@ const UserInfoModal = ({
                 <div>
                   <span className="font-semibold">Age:</span> {userInfo.age}
                 </div>
-                <div>
-                  <span className="font-semibold">Role:</span> {userInfo.role}
-                </div>
                 <div className="flex gap-2 mt-4">
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="bg-pink-600 text-white px-4 py-1 rounded hover:bg-pink-700"
+                    className="bg-pink-600 text-white px-4 py-1 rounded hover:bg-pink-700 cursor-pointer"
                   >
                     Edit
                   </button>

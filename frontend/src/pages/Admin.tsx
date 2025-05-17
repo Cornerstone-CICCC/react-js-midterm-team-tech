@@ -61,7 +61,7 @@ const RentalGirlfriendAdmin = () => {
       .then(async res => {
         if (!res.ok) throw new Error('No user');
         const data = await res.json();
-        console.log('User data:ADMIN', data);
+
         if (data && data.role !== 'admin') {
           navigate('/service-list', { replace: true });
         }
@@ -99,9 +99,6 @@ const RentalGirlfriendAdmin = () => {
 
   // Handle select changes
   const handleSelectChange = (value: string, name: string) => {
-    console.log(formData);
-    console.log(name);
-    console.log(formData);
     setFormData({ ...formData, [name]: value });
   };
 
@@ -124,7 +121,6 @@ const RentalGirlfriendAdmin = () => {
 
   // Open Edit Dialog
   const openEditDialog = (girlfriend: Girl) => {
-    console.log(girlfriend.price_id);
     setCurrentGirlfriend(girlfriend);
     setFormData({ ...girlfriend });
     setIsEditDialogOpen(true);
@@ -215,13 +211,21 @@ const RentalGirlfriendAdmin = () => {
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Rental Girlfriend Admin Panel</h1>
-          <Button
-            onClick={openAddDialog}
-            className="bg-black text-white hover:bg-gray-800"
-          >
-            Add
-          </Button>
+          <h1 className="text-2xl font-bold">Admin Panel</h1>
+          <div className="flex gap-4">
+            <Button
+              onClick={() => navigate('/service-list')}
+              className="bg-white text-black border-1 border-black cursor-pointer hover:bg-gray-200"
+            >
+              Back to Client
+            </Button>
+            <Button
+              onClick={openAddDialog}
+              className="bg-black text-white cursor-pointer hover:bg-gray-800"
+            >
+              Add
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-4">
@@ -257,14 +261,14 @@ const RentalGirlfriendAdmin = () => {
                     <Button
                       onClick={() => openEditDialog(gf)}
                       variant="outline"
-                      className="bg-black text-white hover:bg-gray-800 rounded-full px-6"
+                      className="bg-black text-white hover:bg-gray-800 hover:text-white rounded-full px-6 cursor-pointer"
                     >
                       Edit
                     </Button>
                     <Button
                       onClick={() => openDeleteDialog(gf)}
                       variant="outline"
-                      className="bg-white text-black border-black hover:bg-gray-100 rounded-full px-6"
+                      className="bg-white text-black border-black hover:bg-gray-100 rounded-full px-6 cursor-pointer"
                     >
                       Delete
                     </Button>

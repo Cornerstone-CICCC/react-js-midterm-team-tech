@@ -3,6 +3,7 @@ import { Info, UserCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Logo from '../assets/LOGO.png';
 import UserInfoModal from './UserInfoModal';
+import { toast } from 'sonner';
 
 const Header = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -29,7 +30,7 @@ const Header = () => {
           setUserId(data.userId);
           setIsAdmin(data.role === 'admin');
           // setUserInfo(data);
-          console.log('User data:', data);
+
           fetch(`${import.meta.env.VITE_BACKEND_URL}/user/${data.userId}`, {
             method: 'GET',
             credentials: 'include',
@@ -43,7 +44,6 @@ const Header = () => {
                 age: userData.age?.toString() || '',
                 role: userData.role || '',
               });
-              console.log('User info:', userData);
             });
         } else {
           setUserId(null);
@@ -82,8 +82,23 @@ const Header = () => {
       const updated = await res.json();
       setUserInfo(updated);
       setIsEditing(false);
+      toast.success('Edit successfully!');
     } else {
-      alert('Failed to update user info');
+      toast.error('Failed to update user info...');
+    }
+  };
+
+  const handleLogout = async () => {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/logout`, {
+      method: 'post',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (res.ok) {
+      toast.success('Logged out successfully');
+      navigate('/');
+    } else {
+      toast.error('Failed to logged out...');
     }
   };
 
@@ -92,7 +107,7 @@ const Header = () => {
       <div className="absolute inset-0 h-20 bg-[radial-gradient(circle_at_10%_20%,rgba(255,192,203,0.3),transparent_70%),radial-gradient(circle_at_90%_80%,rgba(255,182,193,0.2),transparent_70%)] blur-2xl pointer-events-none" />
 
       <div className="relative bg-transparent px-6 py-4 flex justify-between items-center">
-        <Link to="/" className="flex items-center">
+        <Link to="/service-list" className="flex items-center">
           <img
             src={Logo}
             alt="Heart Logo"
@@ -101,19 +116,25 @@ const Header = () => {
         </Link>
 
         <div className="flex items-center gap-4">
-          {isAdmin && (
-            <Link
-              to="/admin"
-              className="text-black-500 hover:text-pink-600 transition duration-300"
-              aria-label="Admin page"
-            >
-              <span className="text-lg font-bold">
-                <Info />
-              </span>
-            </Link>
-          )}
           {userId && (
             <>
+              <button
+                className="cursor-pointer px-4 py-2 border-black border-1 rounded-full hover:border-pink-600 hover:text-pink-600 hover:scale-110 transition-transform duration-300"
+                onClick={handleLogout}
+              >
+                Log out
+              </button>
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="text-black-500 hover:text-pink-600 transition duration-300"
+                  aria-label="Admin page"
+                >
+                  <span className="text-lg font-bold">
+                    <Info />
+                  </span>
+                </Link>
+              )}
               <button
                 onClick={() => setOpen(true)}
                 className="text-black-500 hover:text-pink-600 transition duration-300"

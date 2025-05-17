@@ -13,7 +13,7 @@ const SignInPage = () => {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    console.log('Sign in');
+
     try {
       const res = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/user/login`,
@@ -24,15 +24,13 @@ const SignInPage = () => {
           body: JSON.stringify({ username, password }),
         }
       );
-      console.log('Response:', res);
+
       if (!res.ok) {
         setError('Invalid credentials');
         console.error('Invalid credentials');
         return;
       }
-      const data = await res.json();
-      // localStorage.setItem('user', JSON.stringify(data));
-      console.log('User data:', data);
+
       navigate(`/service-list`);
     } catch (e) {
       setError('Sign in failed');
