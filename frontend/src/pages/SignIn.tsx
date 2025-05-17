@@ -67,7 +67,10 @@ const SignInPage = () => {
           </form>
           <div className="mt-4 text-center text-sm text-gray-600">
             Don't have an account?{' '}
-            <a href="/signup" className="text-pink-600 hover:underline">
+            <a
+              onClick={() => navigate('/signup')}
+              className="text-pink-600 hover:underline"
+            >
               Sign Up
             </a>
           </div>
