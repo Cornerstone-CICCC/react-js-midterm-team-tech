@@ -136,6 +136,7 @@ const editUserProfile = async (
 const getUserCookie = (request: Request, response: Response) => {
   const SECRET_KEY = process.env.JWT_SECRET || "jfdhuifhkewuhr";
   const token = request.cookies?.token;
+  console.log(token);
 
   if (!token) {
     response.status(401).json({ message: "No token provided" });
