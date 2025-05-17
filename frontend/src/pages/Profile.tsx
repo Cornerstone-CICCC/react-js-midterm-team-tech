@@ -8,7 +8,6 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -52,16 +51,6 @@ const UserProfilePage = () => {
     });
     setProfile(formData);
     setIsEditing(false);
-  };
-
-  // Format date from ISO to more readable format
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ja-JP', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
   };
 
   return (

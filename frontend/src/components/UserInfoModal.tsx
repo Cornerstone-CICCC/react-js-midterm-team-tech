@@ -1,5 +1,4 @@
 import { Dialog, DialogContent, DialogTitle, DialogClose } from './ui/dialog';
-import { X } from 'lucide-react';
 
 interface UserInfoModalProps {
   userInfo: any;
